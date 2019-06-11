@@ -66,7 +66,7 @@ func main() {
 	// 通过配置参数直接配置
 	logger.SetLogger(logCfg)
 
-	err := config.ReadXml()
+	err := config.ReadConfig()
 	if err != nil {
 		logger.Error(err)
 	}
