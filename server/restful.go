@@ -9,6 +9,7 @@ import (
 	"github.com/yushizhao/hubble/config"
 	"github.com/yushizhao/hubble/models"
 	"github.com/yushizhao/hubble/redis"
+	"github.com/yushizhao/radix"
 )
 
 type MainController struct {
@@ -146,27 +147,21 @@ func (this *MainController) SINGULARITY() {
 	this.Ctx.WriteString(models.MOCK_SINGULARITY)
 }
 
-var MarketDataSource *redis.Client
-var TradingSource *redis.Client
+var RedisClients map[string]*radix.Sentinel
 
 func StartServer() {
 
-	MarketDataSource = redis.NewClient(config.Conf.MarketDataRedis.Url, config.Conf.MarketDataRedis.Pwd, 3, 60)
-	TradingSource = redis.NewClient(config.Conf.TradingRedis.Url, config.Conf.TradingRedis.Pwd, 3, 60)
+	RedisClients = redis.NewSentinels(models.MasterNames, config.Conf.Sentinels, config.Conf.SentinelPassword, config.Conf.ServerPassword)
 
 	go UpdateFromDepth()
 	go SubscribeTrade()
 
-	beego.BConfig.Listen.HTTPPort = config.Conf.HTTPPort
 	beego.BConfig.CopyRequestBody = true
-
-	if config.Conf.EnableHTTPS {
-		beego.BConfig.Listen.EnableHTTPS = true
-		beego.BConfig.Listen.EnableHTTP = false
-		beego.BConfig.Listen.HTTPSPort = config.Conf.HTTPPort
-		beego.BConfig.Listen.HTTPSCertFile = "config/quant.crt"
-		beego.BConfig.Listen.HTTPSKeyFile = "config/quant.key"
-	}
+	beego.BConfig.Listen.EnableHTTPS = true
+	beego.BConfig.Listen.EnableHTTP = false
+	beego.BConfig.Listen.HTTPSPort = config.Conf.Port
+	beego.BConfig.Listen.HTTPSCertFile = "config/quant.crt"
+	beego.BConfig.Listen.HTTPSKeyFile = "config/quant.key"
 
 	beego.Router("/marketData/STATUS", &MainController{}, "get:STATUS")
 	beego.Router("/marketData/TRADEx", &MainController{}, "get:TRADEx")

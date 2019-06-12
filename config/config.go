@@ -9,8 +9,9 @@ import (
 type SConfig struct {
 	Port int
 
-	Sentinels []string
-	Password  string
+	Sentinels        []string
+	SentinelPassword string
+	ServerPassword   string
 }
 
 var Conf SConfig
