@@ -11,10 +11,20 @@ type SConfig struct {
 
 	Sentinels        []string
 	SentinelPassword string
-	ServerPassword   string
+
+	// ServerPassword   string
+	Trading    AddrPass
+	MarketData AddrPass
+	OMS        AddrPass
+	Galaxy     AddrPass
 }
 
 var Conf SConfig
+
+type AddrPass struct {
+	Addr string
+	Pass string
+}
 
 func ReadConfig() error {
 	file, err := os.Open("hubble.json")

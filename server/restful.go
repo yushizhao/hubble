@@ -9,7 +9,6 @@ import (
 	"github.com/yushizhao/hubble/config"
 	"github.com/yushizhao/hubble/models"
 	"github.com/yushizhao/hubble/redis"
-	"github.com/yushizhao/radix"
 )
 
 type MainController struct {
@@ -147,11 +146,17 @@ func (this *MainController) SINGULARITY() {
 	this.Ctx.WriteString(models.MOCK_SINGULARITY)
 }
 
-var RedisClients map[string]*radix.Sentinel
+// var RedisClients map[string]*radix.Sentinel
+
+var MarketDataSource *redis.Client
+var TradingSource *redis.Client
 
 func StartServer() {
 
-	RedisClients = redis.NewSentinels(models.MasterNames, config.Conf.Sentinels, config.Conf.SentinelPassword, config.Conf.ServerPassword)
+	// RedisClients = redis.NewSentinels(models.MasterNames, config.Conf.Sentinels, config.Conf.SentinelPassword, config.Conf.ServerPassword)
+
+	MarketDataSource = redis.NewClient(config.Conf.MarketData.Addr, config.Conf.MarketData.Pass, 3, 60)
+	TradingSource = redis.NewClient(config.Conf.Trading.Pass, config.Conf.Trading.Pass, 3, 60)
 
 	go UpdateFromDepth()
 	go SubscribeTrade()

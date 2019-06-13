@@ -128,6 +128,23 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 }
 ```
 
+### GET /trading/PORTFOLIOS
+投资组合状态
+```json
+[
+	{
+		"PortfolioName":"HUB",
+		"Balance":{
+			"BTC":{"free":1,"locked":2,"total":3},
+			"ETH":{"free":10,"locked":0,"total":10},
+			...
+		},
+		"PnL":100
+	},
+	...
+]
+```
+
 ## /sentinel
 连接redis哨兵
 ### GET /sentinel/STATUS
