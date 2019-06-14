@@ -42,6 +42,17 @@ type OutDEPTH struct {
 	BidDepth   [][2]float64
 }
 
+type Portfolio struct {
+	ClientCode string
+	PnL        float64
+	Reserve    map[string][3]float64
+}
+
+type Account struct {
+	PhysicalAccount string
+	LogicalAccount  []Portfolio
+}
+
 func (this *DEPTH) Output() (o OutDEPTH, err error) {
 	outDEPTH := OutDEPTH{
 		Msg_seq:    this.Msg_seq,

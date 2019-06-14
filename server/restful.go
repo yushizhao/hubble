@@ -146,6 +146,10 @@ func (this *MainController) SINGULARITY() {
 	this.Ctx.WriteString(models.MOCK_SINGULARITY)
 }
 
+func (this *MainController) ACCOUNT() {
+	this.Ctx.WriteString(models.MOCK_ACCOUNT)
+}
+
 // var RedisClients map[string]*radix.Sentinel
 
 var MarketDataSource *redis.Client
@@ -176,6 +180,7 @@ func StartServer() {
 	beego.Router("/trading/MYORDERS", &MainController{}, "post:MYORDERS")
 	beego.Router("/trading/GALAXY", &MainController{}, "get:GALAXY")
 	beego.Router("/trading/SINGULARITY", &MainController{}, "get:SINGULARITY")
+	beego.Router("/trading/ACCOUNT", &MainController{}, "get:ACCOUNT")
 
 	toolbox.StartTask()
 	defer toolbox.StopTask()
