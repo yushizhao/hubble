@@ -137,7 +137,8 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 		"LogicalAccount":[ // 使用上面那个交易所账户进行交易的投资组合
 			{
 				"ClientCode":"HB", // 投资组合名称
-				"PnL":123, // 投资组合的盈亏
+				"Value":123, // 按BTC估值
+				"PnL":0.123, // 投资组合的盈亏
 				"Reserve":{ // 投资组合里有哪些资产
 					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量]
 					"ETH":[0,10,10],
@@ -146,6 +147,7 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 			},
 			{
 				"ClientCode":"XX",
+				"Value":123,
 				"PnL":-45.1,
 				"Reserve":{
 					"BTC":[1,0.2,1.2],
@@ -161,6 +163,7 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 		"LogicalAccount":[
 			{
 				"ClientCode":"HB",
+				"Value":123,
 				"PnL":2,
 				"Reserve":{
 					"USDT":[10.1,0,10.1],
@@ -170,6 +173,7 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 			},
 			{
 				"ClientCode":"XX",
+				"Value":123,
 				"PnL":-7,
 				"Reserve":{
 					"BTC":[1,0.2,1.2],
@@ -182,6 +186,15 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 	},
 	... // 更多交易所账户
 ]
+```
+
+### GET /trading/PORTIFOLIO
+投资组合状态
+```json
+{
+	"HB":2.123, // 各交易所PnL加总
+	"XX":-52.1
+}
 ```
 
 ## /sentinel

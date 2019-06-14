@@ -50,6 +50,7 @@ type FairValue struct {
 
 type Portfolio struct {
 	ClientCode string
+	Value      float64
 	PnL        float64
 	Reserve    map[string][3]float64
 }
