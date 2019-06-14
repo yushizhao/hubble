@@ -11,11 +11,13 @@ type MEMO struct {
 	// Symbols             []string
 	SymbolsMapExchanges map[string][]string
 	SymbolsMapLastTrade map[string]models.TRADE
+	Accounts            []models.Account
 
 	// LockExchanges           sync.RWMutex // Write in marketData/STATUS call, read in nowhere
 	// LockSymbols             sync.RWMutex // Write in UpdateFromDepth, read in nowhere
 	LockSymbolsMapExchanges sync.RWMutex // Write in UpdateFromDepth, read in DEPTH call
 	LockSymbolsMapLastTrade sync.RWMutex // Write in UpdateFromDepth & SubscribeTrade, read in TRADE call
+	LockAccounts            sync.RWMutex // Write in UpdateAccount, read in ACCOUNT call
 }
 
 var Memo MEMO

@@ -60,3 +60,5 @@ package server
 
 // 	toolbox.AddTask("updateFromDepth", updateFromDepth)
 // }
+
+func TaskWriteReport() {}

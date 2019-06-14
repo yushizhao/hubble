@@ -95,3 +95,5 @@ func SubscribeTrade() {
 		}
 	}
 }
+
+func UpdateAccount() {}
