@@ -128,20 +128,59 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 }
 ```
 
-### GET /trading/PORTFOLIOS
-投资组合状态
+### GET /trading/ACCOUNT
+账户状态
 ```json
 [
 	{
-		"PortfolioName":"HUB",
-		"Balance":{
-			"BTC":{"free":1,"locked":2,"total":3},
-			"ETH":{"free":10,"locked":0,"total":10},
-			...
-		},
-		"PnL":100
+		"PhysicalAccount":"POLONIEXK1", // 交易所账户
+		"LogicalAccount":[ // 使用上面那个交易所账户进行交易的投资组合
+			{
+				"ClientCode":"HB", // 投资组合名称
+				"PnL":123, // 投资组合的盈亏
+				"Reserve":{ // 投资组合里有哪些资产
+					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量]
+					"ETH":[0,10,10],
+					... // 更多币种
+				}
+			},
+			{
+				"ClientCode":"XX",
+				"PnL":-45.1,
+				"Reserve":{
+					"BTC":[1,0.2,1.2],
+					"USDT":[100,10,110],
+					...
+				}
+			},
+			... // 更多投资组合
+		]
 	},
-	...
+	{
+		"PhysicalAccount":"POLONIEXK2",
+		"LogicalAccount":[
+			{
+				"ClientCode":"HB",
+				"PnL":2,
+				"Reserve":{
+					"USDT":[10.1,0,10.1],
+					"ETH":[0,10,10],
+					...
+				}
+			},
+			{
+				"ClientCode":"XX",
+				"PnL":-7,
+				"Reserve":{
+					"BTC":[1,0.2,1.2],
+					"USDT":[100,10,110],
+					...
+				}
+			},
+			...
+		]
+	},
+	... // 更多交易所账户
 ]
 ```
 
