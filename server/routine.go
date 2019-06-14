@@ -96,4 +96,18 @@ func SubscribeTrade() {
 	}
 }
 
-func UpdateAccount() {}
+func UpdateAccount() {
+	var fairValue models.FairValue
+	for {
+		b, err := MarketDataSource.Get("FAIRVALUE")
+		if err != nil {
+			logger.Error(err)
+		}
+		err = json.Unmarshal(b, &fairValue)
+		if err != nil {
+			logger.Error(err)
+		}
+		logger.Debug("%v", fairValue)
+		time.Sleep(5 * time.Second)
+	}
+}

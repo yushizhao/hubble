@@ -164,6 +164,7 @@ func StartServer() {
 
 	go UpdateFromDepth()
 	go SubscribeTrade()
+	go UpdateAccount()
 
 	beego.BConfig.CopyRequestBody = true
 	beego.BConfig.Listen.EnableHTTPS = true

@@ -42,6 +42,12 @@ type OutDEPTH struct {
 	BidDepth   [][2]float64
 }
 
+type FairValue struct {
+	ISSUE_TIME  string
+	BTC_RATE    map[string][2]float64
+	TOKEN_PRICE map[string][2]float64
+}
+
 type Portfolio struct {
 	ClientCode string
 	PnL        float64
