@@ -111,3 +111,15 @@ func (this *DEPTH) Output() (o OutDEPTH, err error) {
 
 	return outDEPTH, err
 }
+
+func (this *Portfolio) EstimateValue(fairValue FairValue) error {
+	return nil
+}
+
+func (this *Portfolio) CalculatePnl(that Portfolio) error {
+	return nil
+}
+
+func (this *Account) Complete(that Account, fairValue FairValue) error {
+	return nil
+}
