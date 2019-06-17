@@ -144,7 +144,12 @@ func (this *MainController) SINGULARITY() {
 }
 
 func (this *MainController) ACCOUNT() {
-	this.Ctx.WriteString(models.MOCK_ACCOUNT)
+	// this.Ctx.WriteString(models.MOCK_ACCOUNT)
+	b, err := json.Marshal(Memo.RealtimeAccounts)
+	if err != nil {
+		logger.Error(err)
+	}
+	this.Ctx.ResponseWriter.Write(b)
 }
 
 // func (this *MainController) PORTIFOLIO() {
