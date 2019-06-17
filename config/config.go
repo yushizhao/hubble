@@ -17,6 +17,8 @@ type SConfig struct {
 	MarketData AddrPass
 	OMS        AddrPass
 	Galaxy     AddrPass
+
+	ReportSchedule string
 }
 
 var Conf SConfig

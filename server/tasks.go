@@ -1,5 +1,10 @@
 package server
 
+import (
+	"github.com/astaxie/beego/toolbox"
+	"github.com/yushizhao/hubble/config"
+)
+
 // func TaskUpdateFromDepth() {
 // 	updateFromDepth := toolbox.NewTask("updateFromDepth", "0 0 */2 * * *", func() error {
 // 		// this task will run every 2 hours
@@ -61,4 +66,9 @@ package server
 // 	toolbox.AddTask("updateFromDepth", updateFromDepth)
 // }
 
-func TaskWriteReport() {}
+func TaskWriteReport() {
+	writeReport := toolbox.NewTask("writeReport", config.Conf.ReportSchedule, func() error {
+		return nil
+	})
+	toolbox.AddTask("writeReport", writeReport)
+}
