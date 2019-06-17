@@ -150,9 +150,9 @@ func (this *MainController) ACCOUNT() {
 	this.Ctx.WriteString(models.MOCK_ACCOUNT)
 }
 
-func (this *MainController) PORTIFOLIO() {
-	this.Ctx.WriteString(models.MOCK_PORTIFOLIO)
-}
+// func (this *MainController) PORTIFOLIO() {
+// 	this.Ctx.WriteString(models.MOCK_PORTIFOLIO)
+// }
 
 // var RedisClients map[string]*radix.Sentinel
 
@@ -186,7 +186,7 @@ func StartServer() {
 	beego.Router("/trading/GALAXY", &MainController{}, "get:GALAXY")
 	beego.Router("/trading/SINGULARITY", &MainController{}, "get:SINGULARITY")
 	beego.Router("/trading/ACCOUNT", &MainController{}, "get:ACCOUNT")
-	beego.Router("/trading/PORTIFOLIO", &MainController{}, "get:PORTIFOLIO")
+	// beego.Router("/trading/PORTIFOLIO", &MainController{}, "get:PORTIFOLIO")
 
 	toolbox.StartTask()
 	defer toolbox.StopTask()

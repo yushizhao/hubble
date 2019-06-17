@@ -123,3 +123,72 @@ func (this *Portfolio) CalculatePnl(that Portfolio) error {
 func (this *Account) Complete(that Account, fairValue FairValue) error {
 	return nil
 }
+
+func (this *Account) LogicalTotal() error {
+	clientCode := "TOTAL"
+	value := 0.0
+	pnl := 0.0
+	reserve := make(map[string][3]float64)
+
+	for _, p := range this.LogicalAccount {
+		if p.ClientCode == clientCode {
+			return fmt.Errorf("already has TOTAL")
+		}
+		value = value + p.Value
+		pnl = pnl + p.PnL
+
+		for k, v := range p.Reserve {
+			if _, ok := reserve[k]; ok {
+				var tmp [3]float64
+				tmp[0] = reserve[k][0] + v[0]
+				tmp[1] = reserve[k][1] + v[1]
+				tmp[2] = reserve[k][2] + v[2]
+				reserve[k] = tmp
+			} else {
+				reserve[k] = v
+			}
+		}
+	}
+
+	total := Portfolio{clientCode, value, pnl, reserve}
+	this.LogicalAccount = append(this.LogicalAccount, total)
+	return nil
+}
+
+func PhysicalTotal(these []Account) ([]Account, error) {
+	physical := "TOTAL"
+	var portfolio []Portfolio
+	for _, a := range these {
+		if a.PhysicalAccount == physical {
+			return these, fmt.Errorf("already has TOTAL")
+		}
+		for _, pin := range a.LogicalAccount {
+			hasFound := false
+			for i, _ := range portfolio {
+				if pin.ClientCode == portfolio[i].ClientCode {
+					hasFound = true
+					portfolio[i].Value = portfolio[i].Value + pin.Value
+					portfolio[i].PnL = portfolio[i].PnL + pin.PnL
+
+					for k, v := range pin.Reserve {
+						if _, ok := portfolio[i].Reserve[k]; ok {
+							var tmp [3]float64
+							tmp[0] = portfolio[i].Reserve[k][0] + v[0]
+							tmp[1] = portfolio[i].Reserve[k][1] + v[1]
+							tmp[2] = portfolio[i].Reserve[k][2] + v[2]
+							portfolio[i].Reserve[k] = tmp
+						} else {
+							portfolio[i].Reserve[k] = v
+						}
+					}
+				}
+			}
+			if !hasFound {
+				portfolio = append(portfolio, pin)
+			}
+		}
+	}
+	total := Account{physical, portfolio}
+	these = append(these, total)
+	return these, nil
+}

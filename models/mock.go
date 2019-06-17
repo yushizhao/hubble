@@ -9,5 +9,5 @@ const (
 	MOCK_GALAXY      = "{\"ACTIVE\":1}"
 	MOCK_SINGULARITY = "{\"strategy1\":{\"Active\":0}}"
 	MOCK_ACCOUNT     = ""
-	MOCK_PORTIFOLIO  = ""
+	// MOCK_PORTIFOLIO  = ""
 )

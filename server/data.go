@@ -13,7 +13,6 @@ type MEMO struct {
 	SymbolsMapLastTrade map[string]models.TRADE
 	Accounts            []models.Account
 	RealtimeAccounts    []models.Account
-	RealtimePnL         map[string]float64
 
 	// LockExchanges           sync.RWMutex // Write in marketData/STATUS call, read in nowhere
 	// LockSymbols             sync.RWMutex // Write in UpdateFromDepth, read in nowhere
@@ -21,7 +20,6 @@ type MEMO struct {
 	LockSymbolsMapLastTrade sync.RWMutex // Write in UpdateFromDepth & SubscribeTrade, read in TRADE call
 	LockAccounts            sync.RWMutex // Write in TaskWriteReport & StartServer, read in UpdateAccount
 	LockRealtimeAccounts    sync.RWMutex // Write in UpdateAccount, read in ACCOUNT call & TaskWriteReport
-	LockRealtimePnL         sync.RWMutex // Write in UpdateAccount, read in PORTIFOLIO call & TaskWriteReport
 }
 
 var Memo MEMO
