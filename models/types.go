@@ -133,6 +133,10 @@ func (this *Portfolio) EstimateValue(fairValue FairValue) error {
 }
 
 func (this *Portfolio) CalculatePnl(that Portfolio) error {
+	if this.ClientCode != that.ClientCode {
+		return fmt.Errorf("different portfolio")
+	}
+	this.PnL = this.Value - that.Value
 	return nil
 }
 
