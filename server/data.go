@@ -15,8 +15,8 @@ type MEMO struct {
 	// Symbols             []string
 	SymbolsMapExchanges map[string][]string
 	SymbolsMapLastTrade map[string]models.TRADE
-	Accounts            *[]models.Account
-	RealtimeAccounts    *[]models.Account
+	Accounts            []models.Account
+	RealtimeAccounts    []models.Account
 
 	// LockExchanges           sync.RWMutex // Write in marketData/STATUS call, read in nowhere
 	// LockSymbols             sync.RWMutex // Write in UpdateFromDepth, read in nowhere
@@ -42,11 +42,12 @@ func init() {
 	if err != nil {
 		logger.Error(err)
 	}
-	err = json.Unmarshal(data, Memo.Accounts)
+	err = json.Unmarshal(data, &Memo.Accounts)
 	if err != nil {
 		logger.Error(err)
 	}
 
+	Memo.RealtimeAccounts = Memo.Accounts
 	logger.Info(&Memo.Accounts)
 
 }

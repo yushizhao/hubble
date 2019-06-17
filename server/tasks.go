@@ -76,7 +76,7 @@ func Backup() error {
 
 	now := time.Now().Format(time.RFC3339)
 
-	b, err := json.Marshal(&Memo.RealtimeAccounts)
+	b, err := json.Marshal(Memo.RealtimeAccounts)
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func TaskWriteReport() {
 			logger.Error(err)
 		}
 		// reset Accounts
-
+		Memo.Accounts = Memo.RealtimeAccounts
 		// write report
 
 		return nil
