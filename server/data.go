@@ -1,8 +1,12 @@
 package server
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"os"
 	"sync"
 
+	"github.com/wonderivan/logger"
 	"github.com/yushizhao/hubble/models"
 )
 
@@ -27,4 +31,21 @@ var Memo MEMO
 func init() {
 	Memo.SymbolsMapExchanges = make(map[string][]string)
 	Memo.SymbolsMapLastTrade = make(map[string]models.TRADE)
+
+	file, err := os.Open("account.json")
+	if err != nil {
+		logger.Error(err)
+		logger.Warn("account.json not found?")
+	}
+	defer file.Close()
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		logger.Error(err)
+	}
+	err = json.Unmarshal(data, Memo.Accounts)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	Memo.RealtimeAccounts = Memo.Accounts
 }
