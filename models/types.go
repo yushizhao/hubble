@@ -133,14 +133,25 @@ func (this *Portfolio) EstimateValue(fairValue FairValue) error {
 }
 
 func (this *Portfolio) CalculatePnl(that Portfolio) error {
-	if this.ClientCode != that.ClientCode {
-		return fmt.Errorf("different portfolio")
+	if this.ClientCode == that.ClientCode {
+		this.PnL = this.Value - that.Value
 	}
-	this.PnL = this.Value - that.Value
 	return nil
 }
 
 func (this *Account) Complete(that Account, fairValue FairValue) error {
+	for i, _ := range this.LogicalAccount {
+		err := this.LogicalAccount[i].EstimateValue(fairValue)
+		if err != nil {
+			return err
+		}
+		for _, pin := range that.LogicalAccount {
+			err := this.LogicalAccount[i].CalculatePnl(pin)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
 
