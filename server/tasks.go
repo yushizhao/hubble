@@ -1,6 +1,12 @@
 package server
 
 import (
+	"encoding/json"
+	"os"
+	"time"
+
+	"github.com/wonderivan/logger"
+
 	"github.com/astaxie/beego/toolbox"
 	"github.com/yushizhao/hubble/config"
 )
@@ -66,8 +72,52 @@ import (
 // 	toolbox.AddTask("updateFromDepth", updateFromDepth)
 // }
 
+func Backup() error {
+
+	now := time.Now().Format(time.RFC3339)
+
+	b, err := json.Marshal(&Memo.RealtimeAccounts)
+	if err != nil {
+		return err
+	}
+
+	bak, err := os.Create(now + ".bak")
+	if err != nil {
+		return err
+	}
+	_, err = bak.Write(b)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.OpenFile("account.json", os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		return err
+	}
+	_, err = f.Write(b)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func TaskWriteReport() {
 	writeReport := toolbox.NewTask("writeReport", config.Conf.ReportSchedule, func() error {
+		Memo.LockRealtimeAccounts.Lock()
+		Memo.LockAccounts.Lock()
+		defer Memo.LockRealtimeAccounts.Unlock()
+		defer Memo.LockAccounts.Unlock()
+
+		// log&backup realtimeAccounts
+		err := Backup()
+		if err != nil {
+			logger.Error(err)
+		}
+		// reset Accounts
+
+		// write report
+
 		return nil
 	})
 	toolbox.AddTask("writeReport", writeReport)
