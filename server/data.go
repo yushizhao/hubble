@@ -47,5 +47,6 @@ func init() {
 		logger.Error(err)
 	}
 
-	Memo.RealtimeAccounts = Memo.Accounts
+	logger.Info(&Memo.Accounts)
+
 }
