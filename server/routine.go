@@ -84,6 +84,7 @@ func SubscribeTrade() {
 			err := json.Unmarshal(v.Data, &t)
 			if err != nil {
 				logger.Error(err)
+				continue
 			}
 			Memo.LockSymbolsMapLastTrade.Lock()
 			Memo.SymbolsMapLastTrade[t.Symbol] = t
@@ -97,17 +98,67 @@ func SubscribeTrade() {
 }
 
 func UpdateAccount() {
-	var fairValue models.FairValue
+	psc, err := TradingSource.PSub("TRADEx*")
+	if err != nil {
+		logger.Error(err)
+	}
+
 	for {
-		b, err := MarketDataSource.Get("FAIRVALUE")
-		if err != nil {
-			logger.Error(err)
+		switch v := psc.Receive().(type) {
+		case redis.Message:
+			// logger.Info("%s: message: %s\n", v.Channel, v.Data)
+			Memo.LockAccounts.RLock()
+			Memo.LockRealtimeAccounts.Lock()
+			defer Memo.LockAccounts.RUnlock()
+			defer Memo.LockRealtimeAccounts.Unlock()
+
+			var tmpAccounts []models.Account
+			err := json.Unmarshal(v.Data, &tmpAccounts)
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
+
+			var fairValue models.FairValue
+			b, err := MarketDataSource.Get("FAIRVALUE")
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
+			err = json.Unmarshal(b, &fairValue)
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
+
+			for i, _ := range tmpAccounts {
+				for _, ain := range Memo.Accounts {
+					err := tmpAccounts[i].Complete(ain, fairValue)
+					if err != nil {
+						logger.Error(err)
+						continue
+					}
+				}
+
+				err := tmpAccounts[i].LogicalTotal()
+				if err != nil {
+					logger.Error(err)
+					continue
+				}
+			}
+
+			tmpAccounts, err = models.PhysicalTotal(tmpAccounts)
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
+
+			Memo.RealtimeAccounts = tmpAccounts
+
+		case redis.Subscription:
+			logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
+		case error:
+			logger.Error(v)
 		}
-		err = json.Unmarshal(b, &fairValue)
-		if err != nil {
-			logger.Error(err)
-		}
-		logger.Debug("%v", fairValue)
-		time.Sleep(5 * time.Second)
 	}
 }

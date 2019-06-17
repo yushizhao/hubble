@@ -140,6 +140,10 @@ func (this *Portfolio) CalculatePnl(that Portfolio) error {
 }
 
 func (this *Account) Complete(that Account, fairValue FairValue) error {
+	if this.PhysicalAccount != that.PhysicalAccount {
+		return nil
+	}
+
 	for i, _ := range this.LogicalAccount {
 		err := this.LogicalAccount[i].EstimateValue(fairValue)
 		if err != nil {
