@@ -152,40 +152,46 @@ func (this *InAccount) ToAccount() Account {
 	return Account{this.Exchange, this.Counter, portfolios}
 }
 
-func (this *Portfolio) EstimateValue(fairValue FairValue) error {
-	value := 0.0
-	for k, v := range this.Reserve {
-		if pv, ok := fairValue.BTC_RATE[k]; ok {
-			value = value + v[2]/pv[0]
-		}
+func (this *Account) EstimateValue(fairValue FairValue) error {
 
-		if pv, ok := fairValue.TOKEN_PRICE[k]; ok {
-			value = value + v[2]*pv[0]
+	for i, _ := range this.LogicalAccount {
+
+		value := 0.0
+
+		for k, v := range this.LogicalAccount[i].Reserve {
+
+			if k == "BTC" {
+				value = value + v[2]
+				continue
+			}
+
+			if pv, ok := fairValue.BTC_RATE[k]; ok {
+				value = value + v[2]/pv[0]
+				continue
+			}
+
+			if pv, ok := fairValue.TOKEN_PRICE[k]; ok {
+				value = value + v[2]*pv[0]
+				continue
+			}
 		}
+		this.LogicalAccount[i].Value = value
 	}
-	this.Value = value
+
 	return nil
 }
 
-func (this *Portfolio) CalculatePnl(that Portfolio) error {
+func (this *Portfolio) calculatePnl(that Portfolio) error {
 	if this.ClientCode == that.ClientCode {
 		this.PnL = this.Value - that.Value
 	}
 	return nil
 }
 
-func (this *Account) Complete(that Account, fairValue FairValue) error {
-	if this.PhysicalAccount != that.PhysicalAccount {
-		return nil
-	}
-
+func (this *Account) CalculatePnl(that Account) error {
 	for i, _ := range this.LogicalAccount {
-		err := this.LogicalAccount[i].EstimateValue(fairValue)
-		if err != nil {
-			return err
-		}
 		for _, pin := range that.LogicalAccount {
-			err := this.LogicalAccount[i].CalculatePnl(pin)
+			err := this.LogicalAccount[i].calculatePnl(pin)
 			if err != nil {
 				return err
 			}

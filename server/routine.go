@@ -135,15 +135,22 @@ func UpdateAccount() {
 			}
 
 			for i, _ := range tmpAccounts {
+
+				err := tmpAccounts[i].EstimateValue(fairValue)
+				if err != nil {
+					logger.Error(err)
+					continue
+				}
+
 				for _, ain := range Memo.Accounts {
-					err := tmpAccounts[i].Complete(ain, fairValue)
+					err = tmpAccounts[i].CalculatePnl(ain)
 					if err != nil {
 						logger.Error(err)
 						continue
 					}
 				}
 
-				err := tmpAccounts[i].LogicalTotal()
+				err = tmpAccounts[i].LogicalTotal()
 				if err != nil {
 					logger.Error(err)
 					continue
