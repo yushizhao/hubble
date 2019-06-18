@@ -1,8 +1,10 @@
 package server
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/wonderivan/logger"
@@ -72,6 +74,30 @@ import (
 // 	toolbox.AddTask("updateFromDepth", updateFromDepth)
 // }
 
+func Report() error {
+	now := time.Now().Format(time.RFC3339)
+	file, err := os.Create("PnL." + now + ".csv")
+	if err != nil {
+		return err
+	}
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	for _, a := range Memo.RealtimeAccounts {
+		if a.PhysicalAccount == "TOTAL" {
+			for _, p := range a.LogicalAccount {
+				err := writer.Write([]string{p.ClientCode, strconv.FormatFloat(p.PnL, 'g', -1, 64)})
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
 func Backup() error {
 
 	now := time.Now().Format(time.RFC3339)
@@ -81,7 +107,7 @@ func Backup() error {
 		return err
 	}
 
-	bak, err := os.Create(now + ".bak")
+	bak, err := os.Create(now + ".bak.json")
 	if err != nil {
 		return err
 	}
@@ -105,9 +131,10 @@ func Backup() error {
 func TaskWriteReport() {
 	writeReport := toolbox.NewTask("writeReport", config.Conf.ReportSchedule, func() error {
 		logger.Info("run writeReport at: %s\n", time.Now())
-		Memo.LockRealtimeAccounts.Lock()
+
+		Memo.LockRealtimeAccounts.RLock()
 		Memo.LockAccounts.Lock()
-		defer Memo.LockRealtimeAccounts.Unlock()
+		defer Memo.LockRealtimeAccounts.RUnlock()
 		defer Memo.LockAccounts.Unlock()
 
 		// log&backup realtimeAccounts
@@ -115,9 +142,15 @@ func TaskWriteReport() {
 		if err != nil {
 			logger.Error(err)
 		}
+
 		// reset Accounts
 		Memo.Accounts = Memo.RealtimeAccounts
+
 		// write report
+		err = Report()
+		if err != nil {
+			logger.Error(err)
+		}
 
 		return nil
 	})

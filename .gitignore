@@ -5,3 +5,4 @@ hubble
 *.log
 *.bak
 *.json
+*.csv
