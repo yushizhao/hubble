@@ -1,8 +1,0 @@
-{
-    "Port":18080,
-    "Sentinels":["127.0.0.1:26379","127.0.0.1:26380","127.0.0.1:26381"],
-    "SentinelPassword":"12345678",
-    "Trading":{"Addr":"23.248.163.162:6380","Pass":"Nile"},
-    "MarketData":{"Addr":"45.249.244.59:6666","Pass":"rkqFB4,wpoMmHqT6he}r"},
-    "ReportSchedule":"0 0 */2 * * *"
-}
