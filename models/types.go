@@ -56,8 +56,15 @@ type Portfolio struct {
 }
 
 type Account struct {
+	Exchange        string
 	PhysicalAccount string
 	LogicalAccount  []Portfolio
+}
+
+type InAccount struct {
+	Counter  string
+	Exchange string
+	Asset    map[string]map[string][2]float64
 }
 
 func (this *DEPTH) Output() (o OutDEPTH, err error) {
@@ -111,6 +118,10 @@ func (this *DEPTH) Output() (o OutDEPTH, err error) {
 
 	return outDEPTH, err
 }
+
+// func (this *InAccount) ToAccount() (Account, error) {
+
+// }
 
 func (this *Portfolio) EstimateValue(fairValue FairValue) error {
 	value := 0.0
