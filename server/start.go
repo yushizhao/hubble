@@ -41,6 +41,7 @@ func StartServer() {
 	beego.Router("/trading/ACCOUNT", &MainController{}, "get:ACCOUNT")
 	// beego.Router("/trading/PORTIFOLIO", &MainController{}, "get:PORTIFOLIO")
 
+	TaskWriteReport()
 	toolbox.StartTask()
 	defer toolbox.StopTask()
 
