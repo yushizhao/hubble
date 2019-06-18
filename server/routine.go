@@ -120,7 +120,7 @@ func UpdateAccount() {
 			}
 
 			var tmpAccounts []models.Account
-			for a := range inAccounts {
+			for _, a := range inAccounts {
 				tmpAccounts = append(tmpAccounts, a.ToAccount())
 			}
 
