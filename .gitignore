@@ -3,3 +3,4 @@ config/quant.crt
 config/quant.key
 hubble
 hubble.log
+hubble.json

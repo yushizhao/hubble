@@ -98,7 +98,7 @@ func SubscribeTrade() {
 }
 
 func UpdateAccount() {
-	psc, err := TradingSource.PSub("TRADEx*")
+	psc, err := TradingSource.PSub("*.Moniter")
 	if err != nil {
 		logger.Error(err)
 	}
@@ -112,11 +112,16 @@ func UpdateAccount() {
 			defer Memo.LockAccounts.RUnlock()
 			defer Memo.LockRealtimeAccounts.Unlock()
 
-			var tmpAccounts []models.Account
-			err := json.Unmarshal(v.Data, &tmpAccounts)
+			var inAccounts []models.InAccount
+			err := json.Unmarshal(v.Data, &inAccounts)
 			if err != nil {
 				logger.Error(err)
 				continue
+			}
+
+			var tmpAccounts []models.Account
+			for a := range inAccounts {
+				tmpAccounts = append(tmpAccounts, a.ToAccount())
 			}
 
 			var fairValue models.FairValue

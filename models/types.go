@@ -119,7 +119,7 @@ func (this *DEPTH) Output() (o OutDEPTH, err error) {
 	return outDEPTH, err
 }
 
-func (this *InAccount) ToAccount() (Account, error) {
+func (this *InAccount) ToAccount() Account {
 	var portfolios []Portfolio
 	for asset, portfoliosMapBalance := range this.Asset {
 		for portfolioName, balance := range portfoliosMapBalance {
@@ -149,7 +149,7 @@ func (this *InAccount) ToAccount() (Account, error) {
 			}
 		}
 	}
-	return Account{this.Exchange, this.Counter, portfolios}, nil
+	return Account{this.Exchange, this.Counter, portfolios}
 }
 
 func (this *Portfolio) EstimateValue(fairValue FairValue) error {
