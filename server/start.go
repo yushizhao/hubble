@@ -17,7 +17,7 @@ func StartServer() {
 	// RedisClients = redis.NewSentinels(models.MasterNames, config.Conf.Sentinels, config.Conf.SentinelPassword, config.Conf.ServerPassword)
 
 	MarketDataSource = redis.NewClient(config.Conf.MarketData.Addr, config.Conf.MarketData.Pass, 3, 60)
-	TradingSource = redis.NewClient(config.Conf.Trading.Pass, config.Conf.Trading.Pass, 3, 60)
+	TradingSource = redis.NewClient(config.Conf.Trading.Addr, config.Conf.Trading.Pass, 3, 60)
 
 	go UpdateFromDepth()
 	go SubscribeTrade()
