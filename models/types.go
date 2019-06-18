@@ -119,9 +119,38 @@ func (this *DEPTH) Output() (o OutDEPTH, err error) {
 	return outDEPTH, err
 }
 
-// func (this *InAccount) ToAccount() (Account, error) {
-
-// }
+func (this *InAccount) ToAccount() (Account, error) {
+	var portfolios []Portfolio
+	for asset, portfoliosMapBalance := range this.Asset {
+		for portfolioName, balance := range portfoliosMapBalance {
+			hasFound := false
+			for _, p := range portfolios {
+				if p.ClientCode == portfolioName {
+					hasFound = true
+					var tmp [3]float64
+					tmp[0] = balance[0]
+					tmp[1] = balance[1]
+					tmp[2] = balance[0] + balance[1]
+					// made in !hasFound
+					p.Reserve[asset] = tmp
+				}
+			}
+			if !hasFound {
+				p := Portfolio{portfolioName, 0.0, 0.0, make(map[string][3]float64)}
+				var tmp [3]float64
+				tmp[0] = balance[0]
+				tmp[1] = balance[1]
+				tmp[2] = balance[0] + balance[1]
+				// made in !hasFound
+				p.Reserve[asset] = tmp
+				// may cache a list of p to be appended after this asset
+				// because one p name will not appear twice under one asset
+				portfolios = append(portfolios, p)
+			}
+		}
+	}
+	return Account{this.Exchange, this.Counter, portfolios}, nil
+}
 
 func (this *Portfolio) EstimateValue(fairValue FairValue) error {
 	value := 0.0
