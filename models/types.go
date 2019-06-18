@@ -155,17 +155,12 @@ func (this *InAccount) ToAccount() (Account, error) {
 func (this *Portfolio) EstimateValue(fairValue FairValue) error {
 	value := 0.0
 	for k, v := range this.Reserve {
-		var tmp [3]float64
-		tmp[0] = v[0]
-		tmp[1] = v[1]
-		tmp[2] = tmp[0] + tmp[1]
-		this.Reserve[k] = tmp
 		if pv, ok := fairValue.BTC_RATE[k]; ok {
-			value = value + tmp[2]/pv[0]
+			value = value + v[2]/pv[0]
 		}
 
 		if pv, ok := fairValue.TOKEN_PRICE[k]; ok {
-			value = value + tmp[2]*pv[0]
+			value = value + v[2]*pv[0]
 		}
 	}
 	this.Value = value
@@ -263,7 +258,7 @@ func PhysicalTotal(these []Account) ([]Account, error) {
 			}
 		}
 	}
-	total := Account{physical, portfolio}
+	total := Account{physical, physical, portfolio}
 	these = append(these, total)
 	return these, nil
 }
