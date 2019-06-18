@@ -36,7 +36,7 @@ func UpdateFromDepth() {
 		Memo.SymbolsMapExchanges = newSME
 		Memo.LockSymbolsMapExchanges.Unlock()
 
-		logger.Info("%v\n", Memo.SymbolsMapExchanges)
+		// logger.Info("%v\n", Memo.SymbolsMapExchanges)
 
 		// dummy trade
 		tmpTrade := models.TRADE{
@@ -64,7 +64,7 @@ func UpdateFromDepth() {
 		Memo.SymbolsMapLastTrade = newSMT
 		Memo.LockSymbolsMapLastTrade.Unlock()
 
-		logger.Info("%v\n", Memo.SymbolsMapLastTrade)
+		// logger.Info("%v\n", Memo.SymbolsMapLastTrade)
 		time.Sleep(2 * time.Hour)
 	}
 
@@ -90,7 +90,7 @@ func SubscribeTrade() {
 			Memo.SymbolsMapLastTrade[t.Symbol] = t
 			Memo.LockSymbolsMapLastTrade.Unlock()
 		case redis.Subscription:
-			logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
+			// logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
 			logger.Error(v)
 		}
@@ -169,7 +169,7 @@ func UpdateAccount() {
 			Memo.LockRealtimeAccounts.Unlock()
 
 		case redis.Subscription:
-			logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
+			// logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
 			logger.Error(v)
 		}
