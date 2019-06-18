@@ -98,7 +98,7 @@ func SubscribeTrade() {
 }
 
 func UpdateAccount() {
-	psc, err := TradingSource.PSub("*.Moniter")
+	psc, err := TradingSource.PSub("*.Monitor")
 	if err != nil {
 		logger.Error(err)
 	}
@@ -109,8 +109,6 @@ func UpdateAccount() {
 			// logger.Info("%s: message: %s\n", v.Channel, v.Data)
 			Memo.LockAccounts.RLock()
 			Memo.LockRealtimeAccounts.Lock()
-			defer Memo.LockAccounts.RUnlock()
-			defer Memo.LockRealtimeAccounts.Unlock()
 
 			var inAccounts []models.InAccount
 			err := json.Unmarshal(v.Data, &inAccounts)
@@ -159,6 +157,9 @@ func UpdateAccount() {
 			}
 
 			Memo.RealtimeAccounts = tmpAccounts
+
+			Memo.LockAccounts.RUnlock()
+			Memo.LockRealtimeAccounts.Unlock()
 
 		case redis.Subscription:
 			logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)

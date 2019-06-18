@@ -145,7 +145,10 @@ func (this *MainController) SINGULARITY() {
 
 func (this *MainController) ACCOUNT() {
 	// this.Ctx.WriteString(models.MOCK_ACCOUNT)
+	Memo.LockRealtimeAccounts.RLock()
 	b, err := json.Marshal(Memo.RealtimeAccounts)
+	Memo.LockRealtimeAccounts.RUnlock()
+
 	if err != nil {
 		logger.Error(err)
 	}
