@@ -34,18 +34,18 @@ func init() {
 
 	file, err := os.Open("account.json")
 	if err != nil {
-		logger.Error(err)
+		logger.Warn(err)
 		logger.Warn("account.json not found?")
 	}
 	defer file.Close()
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		logger.Error(err)
+		logger.Warn(err)
 	}
 	// accounts should have Value
 	err = json.Unmarshal(data, &Memo.Accounts)
 	if err != nil {
-		logger.Error(err)
+		logger.Warn(err)
 	}
 
 	Memo.RealtimeAccounts = Memo.Accounts
