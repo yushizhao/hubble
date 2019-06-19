@@ -38,7 +38,9 @@ func StartServer() {
 	beego.Router("/trading/MYORDERS", &MainController{}, "post:MYORDERS")
 	beego.Router("/trading/GALAXY", &MainController{}, "get:GALAXY")
 	beego.Router("/trading/SINGULARITY", &MainController{}, "get:SINGULARITY")
+	beego.Router("/trading/ACCOUNTNAME", &MainController{}, "get:ACCOUNTNAME")
 	beego.Router("/trading/ACCOUNT", &MainController{}, "get:ACCOUNT")
+
 	// beego.Router("/trading/PORTIFOLIO", &MainController{}, "get:PORTIFOLIO")
 
 	TaskWriteReport()

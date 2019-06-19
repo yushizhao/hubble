@@ -128,6 +128,15 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 }
 ```
 
+### GET /trading/ACCOUNTNAME
+全部账户名
+```json
+{
+	"PhysicalAccount":["POLONIEXK1",...,"TOTAL"],
+	"LogicalAccount":["HB",...,"TOTAL"]
+}
+```
+
 ### GET /trading/ACCOUNT
 账户状态
 ```json
@@ -197,7 +206,7 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 					... // 更多币种
 				},
 				"Reserve":{ // 投资组合里有哪些资产
-					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量, 估值， PnL]
+					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量]
 					"ETH":[0,20,20],
 					"USDT":[10.1,0,10.1],
 					... // 更多币种
@@ -223,8 +232,29 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 					...
 				}
 			},
-			... // 更多投资组合
+			..., // 更多投资组合
+			{
+				"ClientCode":"TOTAL", // 虚拟逻辑账户，每个物理账户下设一个TOTAL，用来记录汇总信息
+				"Value":246,
+				"ValueComponent":{ // 分资产种类估值
+					"BTC":200,
+					"ETH":40,
+					... // 更多币种
+				},
+				"PnL":-44.977,
+				"PnLComponent":{ // 分资产种类盈亏
+					"BTC":2.1, 
+					"ETH":0.02,
+					... // 更多币种
+				},
+				"Reserve":{
+					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量]
+					"USDT":[10.1,0,10.1],
+					...
+				}
+			}
 		]
+		
 	}
 ]
 ```

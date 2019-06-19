@@ -143,6 +143,31 @@ func (this *MainController) SINGULARITY() {
 	this.Ctx.WriteString(models.MOCK_SINGULARITY)
 }
 
+func (this *MainController) ACCOUNTNAME() {
+	// this.Ctx.WriteString(models.MOCK_ACCOUNT)
+	tmp := make(map[string][]string)
+	Memo.LockRealtimeAccounts.RLock()
+	for _, a := range Memo.RealtimeAccounts {
+		tmp["PhysicalAccount"] = append(tmp["PhysicalAccount"], a.PhysicalAccount)
+	outer:
+		for _, p := range a.LogicalAccount {
+			for _, n := range tmp["LogicalAccount"] {
+				if n == p.ClientCode {
+					continue outer
+				}
+			}
+			tmp["LogicalAccount"] = append(tmp["LogicalAccount"], p.ClientCode)
+		}
+	}
+	Memo.LockRealtimeAccounts.RUnlock()
+	b, err := json.Marshal(tmp)
+	if err != nil {
+		logger.Error(err)
+	}
+	logger.Info("%q", b)
+	this.Ctx.ResponseWriter.Write(b)
+}
+
 func (this *MainController) ACCOUNT() {
 	// this.Ctx.WriteString(models.MOCK_ACCOUNT)
 	Memo.LockRealtimeAccounts.RLock()
