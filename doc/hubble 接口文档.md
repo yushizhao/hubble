@@ -138,61 +138,44 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 			{
 				"ClientCode":"HB", // 投资组合名称
 				"Value":123, // 按BTC估值
+				"ValueComponent":{ // 分资产种类估值
+					"BTC":200,
+					"ETH":40,
+					... // 更多币种
+				},
 				"PnL":0.123, // 投资组合的盈亏
+				"PnLComponent":{ // 分资产种类盈亏
+					"BTC":2.1, 
+					"ETH":0.02,
+					... // 更多币种
+				},
 				"Reserve":{ // 投资组合里有哪些资产
 					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量]
-					"ETH":[0,10,10],
+					"ETH":[0,20,20],
 					... // 更多币种
-				}
-			},
-			{
-				"ClientCode":"XX",
-				"Value":123,
-				"PnL":-45.1,
-				"Reserve":{
-					"BTC":[2,0.4,2.4],
-					"USDT":[100,10,110],
-					"ETH":[0,10,10],
-					...
 				}
 			},
 			..., // 更多投资组合
 			{
 				"ClientCode":"TOTAL", // 虚拟逻辑账户，每个物理账户下设一个TOTAL，用来记录汇总信息
 				"Value":246,
+				"ValueComponent":{ // 分资产种类估值
+					"BTC":200,
+					"ETH":40,
+					... // 更多币种
+				},
 				"PnL":-44.977,
+				"PnLComponent":{ // 分资产种类盈亏
+					"BTC":2.1, 
+					"ETH":0.02,
+					... // 更多币种
+				},
 				"Reserve":{
-					"BTC":[1,0.2,1.2],
-					"USDT":[100,10,110],
+					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量]
+					"USDT":[10.1,0,10.1],
 					...
 				}
 			}
-		]
-	},
-	{
-		"PhysicalAccount":"POLONIEXK2",
-		"LogicalAccount":[
-			{
-				"ClientCode":"HB",
-				"Value":123,
-				"PnL":2,
-				"Reserve":{
-					"USDT":[10.1,0,10.1],
-					"ETH":[0,10,10],
-					...
-				}
-			},
-			{
-				"ClientCode":"XX",
-				"Value":123,
-				"PnL":-7,
-				"Reserve":{
-					"BTC":[1,0.2,1.2],
-					"USDT":[100,10,110],
-					...
-				}
-			},
-			...
 		]
 	},
 	...， // 更多交易所账户
@@ -202,9 +185,19 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 			{
 				"ClientCode":"HB", // 投资组合名称
 				"Value":246, // 按BTC估值
+				"ValueComponent":{ // 分资产种类估值
+					"BTC":200,
+					"ETH":40,
+					... // 更多币种
+				},
 				"PnL":2.123, // 投资组合的盈亏
+				"PnLComponent":{ // 分资产种类盈亏
+					"BTC":2.1, 
+					"ETH":0.02,
+					... // 更多币种
+				},
 				"Reserve":{ // 投资组合里有哪些资产
-					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量]
+					"BTC":[1,0.2,1.2], // [可用数量，冻结数量，总数量, 估值， PnL]
 					"ETH":[0,20,20],
 					"USDT":[10.1,0,10.1],
 					... // 更多币种
@@ -213,7 +206,17 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 			{
 				"ClientCode":"XX",
 				"Value":123,
+				"ValueComponent":{ // 分资产种类估值
+					"BTC":200,
+					"ETH":40,
+					... // 更多币种
+				},
 				"PnL":-52.1,
+				"PnLComponent":{ // 分资产种类盈亏
+					"BTC":2.1, 
+					"ETH":0.02,
+					... // 更多币种
+				},
 				"Reserve":{
 					"BTC":[2,0.4,2.4],
 					"USDT":[200,20,220],
