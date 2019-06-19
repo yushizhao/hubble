@@ -84,7 +84,7 @@ func SubscribeTrade() {
 			err := json.Unmarshal(v.Data, &t)
 			if err != nil {
 				logger.Error(err)
-				continue
+				break
 			}
 			Memo.LockSymbolsMapLastTrade.Lock()
 			Memo.SymbolsMapLastTrade[t.Symbol] = t
@@ -107,14 +107,12 @@ func UpdateAccount() {
 		switch v := psc.Receive().(type) {
 		case redis.Message:
 			// logger.Info("%s: message: %s\n", v.Channel, v.Data)
-			Memo.LockAccounts.RLock()
-			Memo.LockRealtimeAccounts.Lock()
 
 			var inAccounts []models.InAccount
 			err := json.Unmarshal(v.Data, &inAccounts)
 			if err != nil {
 				logger.Error(err)
-				continue
+				break
 			}
 
 			var tmpAccounts []models.Account
@@ -126,46 +124,50 @@ func UpdateAccount() {
 			b, err := MarketDataSource.Get("FAIRVALUE")
 			if err != nil {
 				logger.Error(err)
-				continue
+				break
 			}
 			err = json.Unmarshal(b, &fairValue)
 			if err != nil {
 				logger.Error(err)
-				continue
+				break
 			}
 
+			Memo.LockAccounts.RLock()
 			for i, _ := range tmpAccounts {
 
 				err := tmpAccounts[i].EstimateValue(fairValue)
 				if err != nil {
 					logger.Error(err)
-					continue
+					Memo.LockAccounts.RUnlock()
+					break
 				}
 
 				for _, ain := range Memo.Accounts {
 					err = tmpAccounts[i].CalculatePnl(ain)
 					if err != nil {
 						logger.Error(err)
-						continue
+						Memo.LockAccounts.RUnlock()
+						break
 					}
 				}
 
 				err = tmpAccounts[i].LogicalTotal()
 				if err != nil {
 					logger.Error(err)
-					continue
+					Memo.LockAccounts.RUnlock()
+					break
 				}
 			}
+			Memo.LockAccounts.RUnlock()
 
 			tmpAccounts, err = models.PhysicalTotal(tmpAccounts)
 			if err != nil {
 				logger.Error(err)
-				continue
+				break
 			}
 
+			Memo.LockRealtimeAccounts.Lock()
 			Memo.RealtimeAccounts = tmpAccounts
-
-			Memo.LockAccounts.RUnlock()
 			Memo.LockRealtimeAccounts.Unlock()
 
 		case redis.Subscription:
