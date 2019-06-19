@@ -144,7 +144,7 @@ func (this *MainController) SINGULARITY() {
 }
 
 func (this *MainController) ACCOUNTNAME() {
-	// this.Ctx.WriteString(models.MOCK_ACCOUNT)
+	// this.Ctx.WriteString(models.MOCK_ACCOUNTNAME)
 	tmp := make(map[string][]string)
 	Memo.LockRealtimeAccounts.RLock()
 	for _, a := range Memo.RealtimeAccounts {
