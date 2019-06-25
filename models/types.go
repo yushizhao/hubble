@@ -154,6 +154,7 @@ func (this *InAccount) ToAccount() Account {
 	return Account{this.Exchange, this.Counter, portfolios}
 }
 
+// init PnL as well
 func (this *Account) EstimateValue(fairValue FairValue) error {
 
 	for i, _ := range this.LogicalAccount {
@@ -166,6 +167,7 @@ func (this *Account) EstimateValue(fairValue FairValue) error {
 				value = value + v[2]
 				// made in ToAccount
 				this.LogicalAccount[i].ValueComponent[k] = v[2]
+				this.LogicalAccount[i].PnLComponent[k] = v[2]
 				continue
 			}
 
@@ -174,6 +176,7 @@ func (this *Account) EstimateValue(fairValue FairValue) error {
 				value = value + tmp
 				// made in ToAccount
 				this.LogicalAccount[i].ValueComponent[k] = tmp
+				this.LogicalAccount[i].PnLComponent[k] = tmp
 				continue
 			}
 
@@ -182,10 +185,12 @@ func (this *Account) EstimateValue(fairValue FairValue) error {
 				value = value + tmp
 				// made in ToAccount
 				this.LogicalAccount[i].ValueComponent[k] = tmp
+				this.LogicalAccount[i].PnLComponent[k] = tmp
 				continue
 			}
 		}
 		this.LogicalAccount[i].Value = value
+		this.LogicalAccount[i].PnL = value
 	}
 
 	return nil
