@@ -19,6 +19,8 @@ type SConfig struct {
 	Galaxy     AddrPass
 
 	ReportSchedule string
+
+	Ding string
 }
 
 var Conf SConfig
