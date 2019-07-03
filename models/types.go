@@ -1,6 +1,8 @@
 package models
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"strconv"
 
@@ -219,11 +221,13 @@ func (this *Portfolio) calculatePnl(that Portfolio) error {
 }
 
 func (this *Account) CalculatePnl(that Account) error {
-	for i, _ := range this.LogicalAccount {
-		for _, pin := range that.LogicalAccount {
-			err := this.LogicalAccount[i].calculatePnl(pin)
-			if err != nil {
-				return err
+	if this.Exchange == that.Exchange {
+		for i, _ := range this.LogicalAccount {
+			for _, pin := range that.LogicalAccount {
+				err := this.LogicalAccount[i].calculatePnl(pin)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -267,6 +271,22 @@ func (this *Portfolio) add(that Portfolio) error {
 	return nil
 }
 
+func (this *Portfolio) copy() (that Portfolio, err error) {
+	var mod bytes.Buffer
+	enc := gob.NewEncoder(&mod)
+	dec := gob.NewDecoder(&mod)
+	err = enc.Encode(this)
+	if err != nil {
+		return that, err
+	}
+	err = dec.Decode(&that)
+	// for formatting
+	if err != nil {
+		return that, err
+	}
+	return that, err
+}
+
 func (this *Account) LogicalTotal() error {
 	total := Portfolio{"TOTAL", 0.0, make(map[string]float64), 0.0, make(map[string]float64), make(map[string][3]float64)}
 
@@ -288,10 +308,12 @@ func (this *Account) LogicalTotal() error {
 func PhysicalTotal(these []Account) ([]Account, error) {
 	var portfolio []Portfolio
 	for _, a := range these {
+
 		if a.PhysicalAccount == "TOTAL" {
 			return these, fmt.Errorf("already has TOTAL")
 		}
 		for _, pin := range a.LogicalAccount {
+
 			hasFound := false
 			for i, _ := range portfolio {
 				if pin.ClientCode == portfolio[i].ClientCode {
@@ -302,10 +324,17 @@ func PhysicalTotal(these []Account) ([]Account, error) {
 					}
 				}
 			}
+
 			if !hasFound {
-				portfolio = append(portfolio, pin)
+				pinCopy, err := pin.copy() // a deep copy
+				if err != nil {
+					return nil, err
+				}
+				portfolio = append(portfolio, pinCopy)
 			}
+
 		}
+
 	}
 	total := Account{"TOTAL", "TOTAL", portfolio}
 	these = append(these, total)
