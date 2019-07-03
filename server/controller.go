@@ -12,6 +12,16 @@ type MainController struct {
 	beego.Controller
 }
 
+func (this *MainController) Options() {
+	// requestDump, err := httputil.DumpRequest(this.Ctx.Request, true)
+	// if err != nil {
+	// 	logger.Debug(err)
+	// }
+	// logger.Debug(string(requestDump))
+	this.Data["json"] = map[string]interface{}{"status": 200, "message": "ok", "moreinfo": ""}
+	this.ServeJSON()
+}
+
 // @router /marketData/STATUS [get]
 func (this *MainController) STATUS() {
 	// this.Ctx.WriteString(models.MOCK_STATUS)
@@ -61,12 +71,6 @@ func (this *MainController) TRADEx() {
 
 func (this *MainController) KLINE() {
 	// this.Ctx.WriteString(models.MOCK_KLINE)
-
-	// requestDump, err := httputil.DumpRequest(this.Ctx.Request, true)
-	// if err != nil {
-	// 	logger.Debug(err)
-	// }
-	// logger.Debug(string(requestDump))
 
 	ob := make(map[string]string)
 	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
