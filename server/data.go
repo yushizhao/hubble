@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
 	"sync"
 
 	"github.com/wonderivan/logger"
@@ -32,13 +31,7 @@ func init() {
 	Memo.SymbolsMapExchanges = make(map[string][]string)
 	Memo.SymbolsMapLastTrade = make(map[string]models.TRADE)
 
-	file, err := os.Open("account.json")
-	if err != nil {
-		logger.Warn(err)
-		logger.Warn("account.json not found?")
-	}
-	defer file.Close()
-	data, err := ioutil.ReadAll(file)
+	data, err := ioutil.ReadFile("account.json")
 	if err != nil {
 		logger.Warn(err)
 	}

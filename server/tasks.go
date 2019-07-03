@@ -116,10 +116,16 @@ func Backup() error {
 		return err
 	}
 
-	f, err := os.OpenFile("account.json", os.O_RDWR|os.O_CREATE, 0666)
+	err = os.Remove("account.json")
 	if err != nil {
 		return err
 	}
+
+	f, err := os.Create("account.json")
+	if err != nil {
+		return err
+	}
+
 	_, err = f.Write(b)
 	if err != nil {
 		return err
