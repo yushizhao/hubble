@@ -1,4 +1,4 @@
-package redis
+package rediswrapper
 
 import "github.com/mediocregopher/radix"
 

@@ -5,20 +5,20 @@ import (
 	"github.com/astaxie/beego/plugins/cors"
 	"github.com/astaxie/beego/toolbox"
 	"github.com/yushizhao/hubble/config"
-	"github.com/yushizhao/hubble/redis"
+	"github.com/yushizhao/hubble/rediswrapper"
 )
 
 // var RedisClients map[string]*radix.Sentinel
 
-var MarketDataSource *redis.Client
-var TradingSource *redis.Client
+var MarketDataSource *rediswrapper.Client
+var TradingSource *rediswrapper.Client
 
 func StartServer() {
 
 	// RedisClients = redis.NewSentinels(models.MasterNames, config.Conf.Sentinels, config.Conf.SentinelPassword, config.Conf.ServerPassword)
 
-	MarketDataSource = redis.NewClient(config.Conf.MarketData.Addr, config.Conf.MarketData.Pass, 3, 60)
-	TradingSource = redis.NewClient(config.Conf.Trading.Addr, config.Conf.Trading.Pass, 3, 60)
+	MarketDataSource = rediswrapper.NewClient(config.Conf.MarketData.Addr, config.Conf.MarketData.Pass, 3, 60)
+	TradingSource = rediswrapper.NewClient(config.Conf.Trading.Addr, config.Conf.Trading.Pass, 3, 60)
 
 	go UpdateFromDepth()
 	go SubscribeTrade()

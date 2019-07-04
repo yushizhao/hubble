@@ -1,4 +1,4 @@
-package redis
+package rediswrapper
 
 import (
 	"encoding/json"
@@ -167,4 +167,17 @@ func (c *Client) PSub(args ...interface{}) (r.PubSubConn, error) {
 	psc := r.PubSubConn{Conn: c.pool.Get()}
 	err := psc.PSubscribe(args[0].(string))
 	return psc, err
+}
+
+func (c *Client) Sub(channel string) (r.PubSubConn, error) {
+	psc := r.PubSubConn{Conn: c.pool.Get()}
+	err := psc.Subscribe(channel)
+	return psc, err
+}
+
+func (c *Client) Pub(channel, msg string) error {
+	conn := c.pool.Get()
+	defer conn.Close()
+	_, err := conn.Do("PUBLISH", channel, msg)
+	return err
 }
