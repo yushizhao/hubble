@@ -72,12 +72,12 @@ type InAccount struct {
 }
 
 type GalaxyStatus struct {
-	Active     string
+	Active     int
 	UpdateTime string
 }
 
 type StrategyStatus struct {
-	Active     string
+	Active     int
 	UpdateTime string
 }
 

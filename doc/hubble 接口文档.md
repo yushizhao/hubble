@@ -237,7 +237,7 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 ### GET /galaxy/STATUS
 ```json
 {
-	"Active": "1", // 1代表处于激活状态，0代表处于非激活状态
+	"Active": 49, // 49代表处于激活状态，48代表处于非激活状态
 	"UpdateTime": "2019-06-30 00:00:00"
 }
 ```
@@ -246,11 +246,11 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 ```json
 {
 	"strategy1": {
-		"Active": "1", // 1代表处于激活状态，0代表处于非激活状态
+		"Active": 49, // 49代表处于激活状态，48代表处于非激活状态
 		"UpdateTime": "2019-06-30 00:00:00"
 	},
 	"用户自由命名": {
-		"Active": "0",
+		"Active": 48,
 		"UpdateTime": "2019-06-30 00:00:00"
 	},
 	...
