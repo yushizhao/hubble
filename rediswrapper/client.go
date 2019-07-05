@@ -59,19 +59,19 @@ func (c *Client) Insert(args ...interface{}) (err error) {
 	return
 }
 
-func (c *Client) Get(args ...interface{}) (value []byte, err error) {
+func (c *Client) Get(key string) (value []byte, err error) {
 
 	conn := c.pool.Get()
 	defer conn.Close()
 
-	return r.Bytes(conn.Do("GET", args[0].(string)))
+	return r.Bytes(conn.Do("GET", key))
 
 }
 
-func (c *Client) IsExist(args ...interface{}) (ok bool, err error) {
+func (c *Client) IsExist(key string) (ok bool, err error) {
 	conn := c.pool.Get()
 	defer conn.Close()
-	ok, err = r.Bool(conn.Do("EXISTS", args[0].(string)))
+	ok, err = r.Bool(conn.Do("EXISTS", key))
 	if err != nil {
 		return
 	}
@@ -79,9 +79,9 @@ func (c *Client) IsExist(args ...interface{}) (ok bool, err error) {
 	return
 }
 
-func (c *Client) Del(args ...interface{}) (err error) {
+func (c *Client) Del(key string) (err error) {
 
-	_, err = c.pool.Get().Do("DEL", args[0].(string))
+	_, err = c.pool.Get().Do("DEL", key)
 
 	return
 }
@@ -105,20 +105,20 @@ func (c *Client) HInsert(args ...interface{}) (err error) {
 
 	return
 }
-func (c *Client) HGet(args ...interface{}) (value []byte, err error) {
+func (c *Client) HGet(key, field string) (value []byte, err error) {
 
 	conn := c.pool.Get()
 	defer conn.Close()
 
-	return r.Bytes(conn.Do("HGET", args[0].(string), args[1].(string)))
+	return r.Bytes(conn.Do("HGET", key, field))
 
 }
 
-func (c *Client) HGetAll(args ...interface{}) (value []byte, err error) {
+func (c *Client) HGetAll(key string) (value []byte, err error) {
 
 	conn := c.pool.Get()
 	defer conn.Close()
-	raw, err := r.StringMap(conn.Do("HGETALL", args[0].(string)))
+	raw, err := r.StringMap(conn.Do("HGETALL", key))
 	if err != nil {
 		return nil, err
 	}
@@ -127,19 +127,19 @@ func (c *Client) HGetAll(args ...interface{}) (value []byte, err error) {
 	return b, err
 }
 
-func (c *Client) HKeys(args ...interface{}) (value []string, err error) {
+func (c *Client) HKeys(key string) (value []string, err error) {
 
 	conn := c.pool.Get()
 	defer conn.Close()
-	raw, err := r.Strings(conn.Do("HKEYS", args[0].(string)))
+	raw, err := r.Strings(conn.Do("HKEYS", key))
 
 	return raw, err
 }
 
-func (c *Client) HIsExist(args ...interface{}) (ok bool, err error) {
+func (c *Client) HIsExist(key, field string) (ok bool, err error) {
 	conn := c.pool.Get()
 	defer conn.Close()
-	ok, err = r.Bool(conn.Do("HEXISTS", args[0].(string), args[1].(string)))
+	ok, err = r.Bool(conn.Do("HEXISTS", key, field))
 	if err != nil {
 		return
 	}
@@ -147,25 +147,25 @@ func (c *Client) HIsExist(args ...interface{}) (ok bool, err error) {
 	return
 }
 
-func (c *Client) HDel(args ...interface{}) (err error) {
+func (c *Client) HDel(key, field string) (err error) {
 
-	_, err = c.pool.Get().Do("HDEL", args[0].(string), args[1].(string))
+	_, err = c.pool.Get().Do("HDEL", key, field)
 
 	return
 }
 
-func (c *Client) Keys(args ...interface{}) (value []string, err error) {
+func (c *Client) Keys(pattern string) (value []string, err error) {
 
 	conn := c.pool.Get()
 	defer conn.Close()
 
-	return r.Strings(conn.Do("KEYS", args[0].(string)))
+	return r.Strings(conn.Do("KEYS", pattern))
 
 }
 
-func (c *Client) PSub(args ...interface{}) (r.PubSubConn, error) {
+func (c *Client) PSub(pattern string) (r.PubSubConn, error) {
 	psc := r.PubSubConn{Conn: c.pool.Get()}
-	err := psc.PSubscribe(args[0].(string))
+	err := psc.PSubscribe(pattern)
 	return psc, err
 }
 
