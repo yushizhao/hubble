@@ -51,6 +51,8 @@ func StartServer() {
 	beego.Router("/trading/SINGULARITY", &MainController{}, "get:SINGULARITY")
 	beego.Router("/trading/ACCOUNTNAME", &MainController{}, "get:ACCOUNTNAME")
 	beego.Router("/trading/ACCOUNT", &MainController{}, "get:ACCOUNT")
+	beego.Router("/galaxy/STATUS", &MainController{}, "get:GSTATUS")
+	beego.Router("/galaxy/STRATEGY", &MainController{}, "get:STRATEGY")
 
 	// beego.Router("/trading/PORTIFOLIO", &MainController{}, "get:PORTIFOLIO")
 

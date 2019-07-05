@@ -25,7 +25,7 @@ func (this *MainController) Options() {
 // @router /marketData/STATUS [get]
 func (this *MainController) STATUS() {
 	// this.Ctx.WriteString(models.MOCK_STATUS)
-
+	// return
 	exchanges, err := MarketDataSource.HKeys("STATUS")
 	if err != nil {
 		logger.Error(err)
@@ -57,7 +57,7 @@ func (this *MainController) STATUS() {
 // @router /marketData/TRADEx [get]
 func (this *MainController) TRADEx() {
 	// this.Ctx.WriteString(models.MOCK_TRADEx)
-
+	// return
 	Memo.LockSymbolsMapLastTrade.RLock()
 	jsonBytes, err := json.Marshal(Memo.SymbolsMapLastTrade)
 	Memo.LockSymbolsMapLastTrade.RUnlock()
@@ -71,7 +71,7 @@ func (this *MainController) TRADEx() {
 
 func (this *MainController) KLINE() {
 	// this.Ctx.WriteString(models.MOCK_KLINE)
-
+	// return
 	ob := make(map[string]string)
 	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
 	if err != nil {
@@ -90,7 +90,7 @@ func (this *MainController) KLINE() {
 
 func (this *MainController) DEPTHx() {
 	// this.Ctx.WriteString(models.MOCK_DEPTHx)
-
+	// return
 	ob := make(map[string]string)
 	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
 	if err != nil {
@@ -133,22 +133,27 @@ func (this *MainController) DEPTHx() {
 
 func (this *MainController) TSTATUS() {
 	this.Ctx.WriteString(models.MOCK_TSTATUS)
+	// return
 }
 
 func (this *MainController) MYORDERS() {
 	this.Ctx.WriteString(models.MOCK_DEPTHx)
+	// return
 }
 
 func (this *MainController) GALAXY() {
 	this.Ctx.WriteString(models.MOCK_GALAXY)
+	// return
 }
 
 func (this *MainController) SINGULARITY() {
 	this.Ctx.WriteString(models.MOCK_SINGULARITY)
+	// return
 }
 
 func (this *MainController) ACCOUNTNAME() {
 	// this.Ctx.WriteString(models.MOCK_ACCOUNTNAME)
+	// return
 	tmp := make(map[string][]string)
 	Memo.LockRealtimeAccounts.RLock()
 	for _, a := range Memo.RealtimeAccounts {
@@ -174,6 +179,7 @@ func (this *MainController) ACCOUNTNAME() {
 
 func (this *MainController) ACCOUNT() {
 	// this.Ctx.WriteString(models.MOCK_ACCOUNT)
+	// return
 	Memo.LockRealtimeAccounts.RLock()
 	b, err := json.Marshal(Memo.RealtimeAccounts)
 	Memo.LockRealtimeAccounts.RUnlock()
@@ -182,6 +188,16 @@ func (this *MainController) ACCOUNT() {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
+}
+
+func (this *MainController) GSTATUS() {
+	this.Ctx.WriteString(models.MOCK_GSTATUS)
+	return
+}
+
+func (this *MainController) STRATEGY() {
+	this.Ctx.WriteString(models.MOCK_STRATEGY)
+	return
 }
 
 // func (this *MainController) PORTIFOLIO() {
