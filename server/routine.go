@@ -92,7 +92,13 @@ func SubscribeTrade() {
 		case redis.Subscription:
 			// logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			logger.Error(v)
+			logger.Warn(v)
+			logger.Warn("Reconnect in 1 sec.")
+			psc, err = MarketDataSource.PSub("TRADEx*")
+			if err != nil {
+				logger.Error(err)
+				break
+			}
 		}
 	}
 }
@@ -173,7 +179,13 @@ func UpdateAccount() {
 		case redis.Subscription:
 			// logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			logger.Error(v)
+			logger.Warn(v)
+			logger.Warn("Reconnect in 1 sec.")
+			psc, err = MarketDataSource.PSub("TRADEx*")
+			if err != nil {
+				logger.Error(err)
+				break
+			}
 		}
 	}
 }
