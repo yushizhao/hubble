@@ -71,6 +71,16 @@ type InAccount struct {
 	Asset    map[string]map[string][2]float64
 }
 
+type GalaxyStatus struct {
+	Active     string
+	UpdateTime string
+}
+
+type StrategyStatus struct {
+	Active     string
+	UpdateTime string
+}
+
 func (this *DEPTH) Output() (o OutDEPTH, err error) {
 	outDEPTH := OutDEPTH{
 		Msg_seq:    this.Msg_seq,

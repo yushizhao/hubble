@@ -16,6 +16,8 @@ type MEMO struct {
 	SymbolsMapLastTrade map[string]models.TRADE
 	Accounts            []models.Account
 	RealtimeAccounts    []models.Account
+	GalaxyStatusMemo    models.GalaxyStatus
+	StrategyStatusMap   map[string]models.StrategyStatus
 
 	// LockExchanges           sync.RWMutex // Write in marketData/STATUS call, read in nowhere
 	// LockSymbols             sync.RWMutex // Write in UpdateFromDepth, read in nowhere
@@ -23,6 +25,8 @@ type MEMO struct {
 	LockSymbolsMapLastTrade sync.RWMutex // Write in UpdateFromDepth & SubscribeTrade, read in TRADE call
 	LockAccounts            sync.RWMutex // Write in TaskWriteReport & StartServer, read in UpdateAccount
 	LockRealtimeAccounts    sync.RWMutex // Write in UpdateAccount, read in ACCOUNT call & TaskWriteReport
+	LockGalaxyStatusMemo    sync.RWMutex // Write in UpdateGalaxy, read in GET /galaxy/STATUS
+	LockStrategyStatusMap   sync.RWMutex // Write in UpdateGalaxy, read in GET /galaxy/STRATEGY
 }
 
 var Memo MEMO
@@ -30,6 +34,7 @@ var Memo MEMO
 func init() {
 	Memo.SymbolsMapExchanges = make(map[string][]string)
 	Memo.SymbolsMapLastTrade = make(map[string]models.TRADE)
+	Memo.StrategyStatusMap = make(map[string]models.StrategyStatus)
 
 	data, err := ioutil.ReadFile("account.json")
 	if err != nil {

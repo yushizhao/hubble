@@ -12,6 +12,7 @@ import (
 
 var MarketDataSource *rediswrapper.Client
 var TradingSource *rediswrapper.Client
+var GalaxySource *rediswrapper.Client
 
 func StartServer() {
 
@@ -19,10 +20,12 @@ func StartServer() {
 
 	MarketDataSource = rediswrapper.NewClient(config.Conf.MarketData.Addr, config.Conf.MarketData.Pass, 3, 60)
 	TradingSource = rediswrapper.NewClient(config.Conf.Trading.Addr, config.Conf.Trading.Pass, 3, 60)
+	GalaxySource = rediswrapper.NewClient(config.Conf.Galaxy.Addr, config.Conf.Galaxy.Pass, 3, 60)
 
 	go UpdateFromDepth()
 	go SubscribeTrade()
 	go UpdateAccount()
+	go UpdateGalaxy()
 
 	beego.BConfig.CopyRequestBody = true
 	beego.BConfig.Listen.EnableHTTPS = true

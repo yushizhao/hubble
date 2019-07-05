@@ -177,3 +177,5 @@ func UpdateAccount() {
 		}
 	}
 }
+
+func UpdateGalaxy() {}
