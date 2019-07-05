@@ -102,32 +102,6 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 ### POST /trading/MYORDERS
 和 DEPTHx 一样
 
-### GET /trading/GALAXY
-对应 psubscribe GalaxyDetail
-今后可能在active这一级加其他字段
-
-```json
-{
-	"ACTIVE": 1 // 1代表galaxy处于激活状态，0代表处于非激活状态
-}
-```
-
-### GET /trading/SINGULARITY
-对应 psubscribe StrategyDetail
-今后可能在active这一级加其他字段
-
-```json
-{
-	"strategy1": {
-		"Active": 1
-	},
-	"用户自由命名": {
-		"Active": 0
-	},
-	...
-}
-```
-
 ### GET /trading/ACCOUNTNAME
 全部账户名
 ```json
@@ -257,6 +231,30 @@ list<list<Timestamp, Open, High, Low, Close, Volume, Quotes_cum>,>
 		
 	}
 ]
+```
+
+## /galaxy
+### GET /galaxy/STATUS
+```json
+{
+	"Active": "1", // 1代表处于激活状态，0代表处于非激活状态
+	"UpdateTime": "2019-06-30 00:00:00"
+}
+```
+
+### GET /galaxy/STRATEGY
+```json
+{
+	"strategy1": {
+		"Active": "1", // 1代表处于激活状态，0代表处于非激活状态
+		"UpdateTime": "2019-06-30 00:00:00"
+	},
+	"用户自由命名": {
+		"Active": "0",
+		"UpdateTime": "2019-06-30 00:00:00"
+	},
+	...
+}
 ```
 
 ## /sentinel
