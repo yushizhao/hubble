@@ -190,4 +190,75 @@ func UpdateAccount() {
 	}
 }
 
-func UpdateGalaxy() {}
+func UpdateGalaxy() {
+	psc, err := GalaxySource.Sub("RtnPlatformDetail", "RtnStrategyDetail")
+	if err != nil {
+		logger.Error(err)
+	}
+
+	for {
+		switch v := psc.Receive().(type) {
+		case redis.Message:
+			if v.Channel == "RtnPlatformDetail" {
+				var s models.GalaxyStatus
+				err := json.Unmarshal(v.Data, &s)
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+				Memo.LockGalaxyStatusMemo.Lock()
+				Memo.GalaxyStatusMemo = s
+				Memo.LockGalaxyStatusMemo.Unlock()
+
+			} else {
+				var tmp map[string]interface{}
+				var s models.StrategyStatus
+
+				err := json.Unmarshal(v.Data, &tmp)
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+				if val, ok := tmp["Active"].(int); ok {
+					s.Active = val
+				} else {
+					logger.Warn("not expected: %s", string(v.Data))
+					break
+				}
+
+				if val, ok := tmp["UpdateTime"].(string); ok {
+					s.UpdateTime = val
+				} else {
+					logger.Warn("not expected: %s", string(v.Data))
+					break
+				}
+
+				if val, ok := tmp["StrategyName"].(string); ok {
+					Memo.LockStrategyStatusMap.Lock()
+					Memo.StrategyStatusMap[val] = s
+					Memo.LockStrategyStatusMap.Unlock()
+				} else {
+					logger.Warn("not expected: %s", string(v.Data))
+					break
+				}
+			}
+
+		case redis.Subscription:
+			// if v.Channel == "RtnPlatformDetail" {
+			// 	logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
+			// } else {
+			// 	logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
+			// }
+		case error:
+			logger.Warn(v)
+			logger.Warn("Reconnect in 1 sec.")
+			psc, err = MarketDataSource.PSub("TRADEx*")
+			if err != nil {
+				logger.Error(err)
+				break
+			}
+		}
+	}
+}

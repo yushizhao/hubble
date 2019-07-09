@@ -169,9 +169,9 @@ func (c *Client) PSub(pattern string) (r.PubSubConn, error) {
 	return psc, err
 }
 
-func (c *Client) Sub(channel string) (r.PubSubConn, error) {
+func (c *Client) Sub(channel ...string) (r.PubSubConn, error) {
 	psc := r.PubSubConn{Conn: c.pool.Get()}
-	err := psc.Subscribe(channel)
+	err := psc.Subscribe(r.Args{}.AddFlat(channel)...)
 	return psc, err
 }
 
