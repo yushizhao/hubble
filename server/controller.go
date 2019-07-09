@@ -191,13 +191,29 @@ func (this *MainController) ACCOUNT() {
 }
 
 func (this *MainController) GSTATUS() {
-	this.Ctx.WriteString(models.MOCK_GSTATUS)
-	return
+	// this.Ctx.WriteString(models.MOCK_GSTATUS)
+	// return
+	Memo.LockGalaxyStatusMemo.RLock()
+	b, err := json.Marshal(Memo.GalaxyStatusMemo)
+	Memo.LockGalaxyStatusMemo.RUnlock()
+
+	if err != nil {
+		logger.Error(err)
+	}
+	this.Ctx.ResponseWriter.Write(b)
 }
 
 func (this *MainController) STRATEGY() {
-	this.Ctx.WriteString(models.MOCK_STRATEGY)
-	return
+	// this.Ctx.WriteString(models.MOCK_STRATEGY)
+	// return
+	Memo.LockStrategyStatusMap.RLock()
+	b, err := json.Marshal(Memo.StrategyStatusMap)
+	Memo.LockStrategyStatusMap.RUnlock()
+
+	if err != nil {
+		logger.Error(err)
+	}
+	this.Ctx.ResponseWriter.Write(b)
 }
 
 // func (this *MainController) PORTIFOLIO() {
