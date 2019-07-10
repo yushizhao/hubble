@@ -21,6 +21,8 @@ type SConfig struct {
 	ReportSchedule string
 
 	Ding string
+
+	JWTSecret string
 }
 
 var Conf SConfig
