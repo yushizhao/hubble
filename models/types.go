@@ -9,6 +9,11 @@ import (
 	"github.com/iancoleman/orderedmap"
 )
 
+type User struct {
+	Secret string
+	Role   string
+}
+
 type STATUS struct {
 	Time      string
 	Connected bool

@@ -10,6 +10,9 @@ import (
 )
 
 type MEMO struct {
+	NameMapUsers     map[string]models.User
+	LockNameMapUsers sync.RWMutex // Write in POST /user/SignUp, Read in POST /user/SignUp & /user/Login
+
 	// Exchanges           []string
 	// Symbols             []string
 	SymbolsMapExchanges map[string][]string
@@ -35,6 +38,7 @@ func init() {
 	Memo.SymbolsMapExchanges = make(map[string][]string)
 	Memo.SymbolsMapLastTrade = make(map[string]models.TRADE)
 	Memo.StrategyStatusMap = make(map[string]models.StrategyStatus)
+	Memo.NameMapUsers = make(map[string]models.User)
 
 	data, err := ioutil.ReadFile("account.json")
 	if err != nil {
@@ -42,6 +46,16 @@ func init() {
 	}
 	// accounts should have Value
 	err = json.Unmarshal(data, &Memo.Accounts)
+	if err != nil {
+		logger.Warn(err)
+	}
+
+	data2, err := ioutil.ReadFile("users.json")
+	if err != nil {
+		logger.Warn(err)
+	}
+	// users should have Value
+	err = json.Unmarshal(data2, &Memo.NameMapUsers)
 	if err != nil {
 		logger.Warn(err)
 	}
