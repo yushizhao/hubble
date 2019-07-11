@@ -3,7 +3,9 @@ package server
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
+	"github.com/wonderivan/logger"
 	"github.com/yushizhao/hubble/config"
+	"github.com/yushizhao/hubble/ding"
 	"github.com/yushizhao/hubble/rediswrapper"
 )
 
@@ -12,6 +14,8 @@ import (
 var MarketDataSource *rediswrapper.Client
 var TradingSource *rediswrapper.Client
 var GalaxySource *rediswrapper.Client
+
+var InvitationDing ding.Ding
 
 func StartServer() {
 
@@ -37,6 +41,8 @@ func StartServer() {
 	beego.InsertFilter("*", beego.BeforeRouter, FilterCrossDomain)
 
 	beego.Router("*", &MainController{}, "options:Options")
+	// beego.Router("/user/SignUp", &MainController{}, "post:SignUp")
+	// beego.Router("/user/Login", &MainController{}, "post:Login")
 	beego.Router("/marketData/STATUS", &MainController{}, "get:STATUS")
 	beego.Router("/marketData/TRADEx", &MainController{}, "get:TRADEx")
 	beego.Router("/marketData/KLINE", &MainController{}, "post:KLINE")
@@ -55,6 +61,12 @@ func StartServer() {
 	TaskWriteReport()
 	toolbox.StartTask()
 	defer toolbox.StopTask()
+
+	InvitationDing = ding.NewDing(config.Conf.Ding, ding.InvitationCodeTemplate, ding.MarkdownJsonTemplate)
+	err := Invitation()
+	if err != nil {
+		logger.Error(err)
+	}
 
 	beego.Run()
 }

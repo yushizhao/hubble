@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/csv"
 	"encoding/json"
+	"math/rand"
 	"os"
 	"strconv"
 	"time"
@@ -134,9 +135,25 @@ func Backup() error {
 	return nil
 }
 
+func Invitation() error {
+	Memo.LockInvitationCode.Lock()
+	defer Memo.LockInvitationCode.Unlock()
+
+	Memo.InvitationCode = rand.Intn(1000000)
+	resp, err := InvitationDing.Send(Memo.InvitationCode)
+	logger.Info(resp)
+	return err
+}
+
+// update invitation code as well
 func TaskWriteReport() {
-	writeReport := toolbox.NewTask("writeReport", config.Conf.ReportSchedule, func() error {
+	writeReport := toolbox.NewTask("writeReport", config.Conf.ReportSchedule, func() (err error) {
 		logger.Info("run writeReport at: %s\n", time.Now())
+
+		err = Invitation()
+		if err != nil {
+			logger.Error(err)
+		}
 
 		Memo.LockRealtimeAccounts.RLock()
 		Memo.LockAccounts.Lock()
@@ -144,7 +161,7 @@ func TaskWriteReport() {
 		defer Memo.LockAccounts.Unlock()
 
 		// log&backup realtimeAccounts
-		err := Backup()
+		err = Backup()
 		if err != nil {
 			logger.Error(err)
 		}

@@ -14,8 +14,8 @@ type Ding struct {
 	jsonTemplate map[string]interface{}
 }
 
-func NewDing(webhook string) Ding {
-	return Ding{webhook, ErrorMsgTemplate, MarkdownJsonTemplate}
+func NewDing(webhook string, msgTemplate string, jsonTemplate map[string]interface{}) Ding {
+	return Ding{webhook, msgTemplate, jsonTemplate}
 }
 
 func (this *Ding) Send(a ...interface{}) (string, error) {

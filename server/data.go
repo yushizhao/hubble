@@ -10,8 +10,8 @@ import (
 )
 
 type MEMO struct {
-	NameMapUsers     map[string]models.User
-	LockNameMapUsers sync.RWMutex // Write in POST /user/SignUp, Read in POST /user/SignUp & /user/Login
+	NameMapUsers   map[string]models.User
+	InvitationCode int
 
 	// Exchanges           []string
 	// Symbols             []string
@@ -21,6 +21,9 @@ type MEMO struct {
 	RealtimeAccounts    []models.Account
 	GalaxyStatusMemo    models.GalaxyStatus
 	StrategyStatusMap   map[string]models.StrategyStatus
+
+	LockNameMapUsers   sync.RWMutex // Write in POST /user/SignUp, Read in POST /user/SignUp & /user/Login
+	LockInvitationCode sync.RWMutex // Write in POST /user/SignUp & TaskWriteReport, Read in POST /user/SignUp
 
 	// LockExchanges           sync.RWMutex // Write in marketData/STATUS call, read in nowhere
 	// LockSymbols             sync.RWMutex // Write in UpdateFromDepth, read in nowhere
@@ -62,5 +65,4 @@ func init() {
 
 	Memo.RealtimeAccounts = Memo.Accounts
 	logger.Info(&Memo.Accounts)
-
 }
