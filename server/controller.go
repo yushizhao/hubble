@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 
 	"github.com/yushizhao/authenticator/boltwrapper"
+	"github.com/yushizhao/authenticator/jwtwrapper"
 
 	"github.com/yushizhao/authenticator/gawrapper"
 
 	"github.com/astaxie/beego"
 	"github.com/wonderivan/logger"
+	"github.com/yushizhao/hubble/config"
 	"github.com/yushizhao/hubble/models"
 )
 
@@ -55,7 +57,7 @@ func (this *MainController) SignUp() {
 
 	userBytes := boltwrapper.UserDB.GetUser(name)
 	if userBytes != nil {
-		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Existing UserName"}
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "UserName Exists"}
 		this.ServeJSON()
 		return
 	}
@@ -83,6 +85,69 @@ func (this *MainController) SignUp() {
 
 	this.Data["json"] = map[string]interface{}{"status": 200, "message": gawrapper.NewOTPAuth(name, secret, ISSUER)}
 	this.ServeJSON()
+}
+
+func (this *MainController) Login() {
+	name := this.GetString("UserName")
+	if name == "" {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing UserName"}
+		this.ServeJSON()
+		return
+	}
+
+	yourCode := this.GetString("AuthenticationCode")
+	if yourCode == "" {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing AuthenticationCode"}
+		this.ServeJSON()
+		return
+	}
+
+	userBytes := boltwrapper.UserDB.GetUser(name)
+	if userBytes == nil {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "UserName Not Exists"}
+		this.ServeJSON()
+		return
+	}
+
+	var u models.User
+	err := json.Unmarshal(userBytes, &u)
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
+
+	verified, err := gawrapper.VerifyTOTP(config.Conf.JWTSecret, yourCode)
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
+	if !verified {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid AuthenticationCode"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
+
+	claims := map[string]interface{}{
+		"Name": name,
+		"Role": u.Role,
+	}
+
+	token, err := jwtwrapper.IssueTokenStrWithExp(claims, config.Conf.JWTSecret, config.Conf.JWTExpire)
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
+
+	this.Data["json"] = map[string]interface{}{"status": 200, "message": token}
+	this.ServeJSON()
+	return
 }
 
 // @router /marketData/STATUS [get]

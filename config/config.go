@@ -23,6 +23,7 @@ type SConfig struct {
 	Ding string
 
 	JWTSecret string
+	JWTExpire int
 }
 
 var Conf SConfig
