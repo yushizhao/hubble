@@ -3,6 +3,8 @@ package server
 import (
 	"encoding/json"
 
+	"github.com/yushizhao/authenticator/gawrapper"
+
 	"github.com/astaxie/beego"
 	"github.com/wonderivan/logger"
 	"github.com/yushizhao/hubble/models"
@@ -18,7 +20,48 @@ func (this *MainController) Options() {
 	// 	logger.Debug(err)
 	// }
 	// logger.Debug(string(requestDump))
-	this.Data["json"] = map[string]interface{}{"status": 200, "message": "ok", "moreinfo": ""}
+	this.Data["json"] = map[string]interface{}{"status": 200, "message": "ok"}
+	this.ServeJSON()
+}
+
+func (this *MainController) SignUp() {
+	code := this.GetString("InvitationCode")
+
+	Memo.LockInvitationCode.RLock()
+	if code != Memo.InvitationCode {
+		Memo.LockInvitationCode.RUnlock()
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid InvitationCode"}
+		this.ServeJSON()
+		return
+	}
+	Memo.LockInvitationCode.RUnlock()
+
+	name := this.GetString("UserName")
+
+	if name == "" {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Empty UserName"}
+		this.ServeJSON()
+		return
+	}
+
+	Memo.LockNameMapUsers.Lock()
+	if _, ok := Memo.NameMapUsers[name]; ok {
+		Memo.LockNameMapUsers.Unlock()
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Existing UserName"}
+		this.ServeJSON()
+		return
+	}
+
+	secret := gawrapper.GenerateSecret()
+
+	var u models.User
+	u.Secret = secret
+	u.Role = ""
+	Memo.NameMapUsers[name] = u
+
+	Memo.LockNameMapUsers.Unlock()
+
+	this.Data["json"] = map[string]interface{}{"status": 200, "message": gawrapper.NewOTPAuth(name, secret, ISSUER)}
 	this.ServeJSON()
 }
 

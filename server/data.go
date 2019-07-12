@@ -11,7 +11,7 @@ import (
 
 type MEMO struct {
 	NameMapUsers   map[string]models.User
-	InvitationCode int
+	InvitationCode string
 
 	// Exchanges           []string
 	// Symbols             []string
@@ -34,6 +34,8 @@ type MEMO struct {
 	LockGalaxyStatusMemo    sync.RWMutex // Write in UpdateGalaxy, read in GET /galaxy/STATUS
 	LockStrategyStatusMap   sync.RWMutex // Write in UpdateGalaxy, read in GET /galaxy/STRATEGY
 }
+
+const ISSUER = "Hubble"
 
 var Memo MEMO
 

@@ -1,7 +1,7 @@
 package ding
 
 var ErrorMsgTemplate = `{"title":"ERROR","text":"# %v"}`
-var InvitationCodeTemplate = `{"title":"Invitation Code","text":"# New Invitation Code\n%d"}`
+var InvitationCodeTemplate = `{"title":"Invitation Code","text":"# New Invitation Code\n%s"}`
 
 var MarkdownJsonTemplate = map[string]interface{}{
 	"msgtype": "markdown",

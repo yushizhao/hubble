@@ -2,6 +2,7 @@ package server
 
 import (
 	"math/rand"
+	"strconv"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
@@ -23,7 +24,7 @@ func Invitation() error {
 	Memo.LockInvitationCode.Lock()
 	defer Memo.LockInvitationCode.Unlock()
 
-	Memo.InvitationCode = rand.Intn(1000000)
+	Memo.InvitationCode = strconv.Itoa(rand.Intn(1000000))
 	resp, err := InvitationDing.Send(Memo.InvitationCode)
 	logger.Info(resp)
 	return err
@@ -53,7 +54,7 @@ func StartServer() {
 	beego.InsertFilter("*", beego.BeforeRouter, FilterCrossDomain)
 
 	beego.Router("*", &MainController{}, "options:Options")
-	// beego.Router("/user/SignUp", &MainController{}, "post:SignUp")
+	beego.Router("/user/SignUp", &MainController{}, "post:SignUp")
 	// beego.Router("/user/Login", &MainController{}, "post:Login")
 	beego.Router("/marketData/STATUS", &MainController{}, "get:STATUS")
 	beego.Router("/marketData/TRADEx", &MainController{}, "get:TRADEx")
