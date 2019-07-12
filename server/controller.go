@@ -28,16 +28,22 @@ func (this *MainController) Options() {
 
 func (this *MainController) SignUp() {
 
-	code := this.GetString("InvitationCode")
+	yourCode := this.GetString("InvitationCode")
 
 	Memo.LockInvitationCode.RLock()
-	if code != Memo.InvitationCode {
-		Memo.LockInvitationCode.RUnlock()
+	myCode := Memo.InvitationCode
+	Memo.LockInvitationCode.RUnlock()
+
+	err := Invitation()
+	if err != nil {
+		logger.Error(err)
+	}
+
+	if yourCode != myCode {
 		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid InvitationCode"}
 		this.ServeJSON()
 		return
 	}
-	Memo.LockInvitationCode.RUnlock()
 
 	name := this.GetString("UserName")
 
