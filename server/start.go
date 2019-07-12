@@ -1,6 +1,8 @@
 package server
 
 import (
+	"math/rand"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
 	"github.com/wonderivan/logger"
@@ -16,6 +18,16 @@ var TradingSource *rediswrapper.Client
 var GalaxySource *rediswrapper.Client
 
 var InvitationDing ding.Ding
+
+func Invitation() error {
+	Memo.LockInvitationCode.Lock()
+	defer Memo.LockInvitationCode.Unlock()
+
+	Memo.InvitationCode = rand.Intn(1000000)
+	resp, err := InvitationDing.Send(Memo.InvitationCode)
+	logger.Info(resp)
+	return err
+}
 
 func StartServer() {
 
