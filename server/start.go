@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/base32"
 	"math/rand"
+	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
@@ -81,6 +82,7 @@ func StartServer() {
 	defer toolbox.StopTask()
 
 	InvitationDing = ding.NewDing(config.Conf.Ding, ding.InvitationCodeTemplate, ding.MarkdownJsonTemplate)
+	rand.Seed(time.Now().Unix())
 	err := Invitation()
 	if err != nil {
 		logger.Error(err)
