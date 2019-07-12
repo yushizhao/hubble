@@ -3,6 +3,8 @@ package server
 import (
 	"encoding/json"
 
+	"github.com/yushizhao/authenticator/boltwrapper"
+
 	"github.com/yushizhao/authenticator/gawrapper"
 
 	"github.com/astaxie/beego"
@@ -25,6 +27,7 @@ func (this *MainController) Options() {
 }
 
 func (this *MainController) SignUp() {
+
 	code := this.GetString("InvitationCode")
 
 	Memo.LockInvitationCode.RLock()
@@ -44,9 +47,8 @@ func (this *MainController) SignUp() {
 		return
 	}
 
-	Memo.LockNameMapUsers.Lock()
-	if _, ok := Memo.NameMapUsers[name]; ok {
-		Memo.LockNameMapUsers.Unlock()
+	userBytes := boltwrapper.UserDB.GetUser(name)
+	if userBytes != nil {
 		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Existing UserName"}
 		this.ServeJSON()
 		return
@@ -57,9 +59,21 @@ func (this *MainController) SignUp() {
 	var u models.User
 	u.Secret = secret
 	u.Role = ""
-	Memo.NameMapUsers[name] = u
+	b, err := json.Marshal(u)
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
 
-	Memo.LockNameMapUsers.Unlock()
+	err = boltwrapper.UserDB.SetUser(name, b)
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
 
 	this.Data["json"] = map[string]interface{}{"status": 200, "message": gawrapper.NewOTPAuth(name, secret, ISSUER)}
 	this.ServeJSON()

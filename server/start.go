@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
 	"github.com/wonderivan/logger"
+	"github.com/yushizhao/authenticator/boltwrapper"
 	"github.com/yushizhao/hubble/config"
 	"github.com/yushizhao/hubble/ding"
 	"github.com/yushizhao/hubble/rediswrapper"
@@ -32,6 +33,7 @@ func Invitation() error {
 
 func StartServer() {
 
+	boltwrapper.InitDB()
 	// RedisClients = redis.NewSentinels(models.MasterNames, config.Conf.Sentinels, config.Conf.SentinelPassword, config.Conf.ServerPassword)
 
 	MarketDataSource = rediswrapper.NewClient(config.Conf.MarketData.Addr, config.Conf.MarketData.Pass, 3, 60)
