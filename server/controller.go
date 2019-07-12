@@ -138,7 +138,7 @@ func (this *MainController) Login() {
 		return
 	}
 
-	verified, err := gawrapper.VerifyTOTP(config.Conf.JWTSecret, yourCode)
+	verified, err := gawrapper.VerifyTOTP(u.Secret, yourCode)
 	if err != nil {
 		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
 		this.ServeJSON()
