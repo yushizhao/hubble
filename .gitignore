@@ -6,3 +6,4 @@ hubble
 *.bak
 *.json
 *.csv
+*.db
