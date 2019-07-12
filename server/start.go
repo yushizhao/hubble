@@ -1,8 +1,8 @@
 package server
 
 import (
+	"encoding/base32"
 	"math/rand"
-	"strconv"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
@@ -25,7 +25,10 @@ func Invitation() error {
 	Memo.LockInvitationCode.Lock()
 	defer Memo.LockInvitationCode.Unlock()
 
-	Memo.InvitationCode = strconv.Itoa(rand.Intn(1000000))
+	b := make([]byte, 20)
+	rand.Read(b)
+	Memo.InvitationCode = base32.StdEncoding.EncodeToString(b)
+
 	resp, err := InvitationDing.Send(Memo.InvitationCode)
 	logger.Info(resp)
 	return err

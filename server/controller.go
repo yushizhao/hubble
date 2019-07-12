@@ -31,6 +31,11 @@ func (this *MainController) Options() {
 func (this *MainController) SignUp() {
 
 	// first thing first
+	Memo.LockInvitationCode.RLock()
+	myCode := Memo.InvitationCode
+	Memo.LockInvitationCode.RUnlock()
+
+	// second thing second
 	err := Invitation()
 	if err != nil {
 		logger.Error(err)
@@ -56,10 +61,6 @@ func (this *MainController) SignUp() {
 		this.ServeJSON()
 		return
 	}
-
-	Memo.LockInvitationCode.RLock()
-	myCode := Memo.InvitationCode
-	Memo.LockInvitationCode.RUnlock()
 
 	if yourCode != myCode {
 		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid InvitationCode"}
