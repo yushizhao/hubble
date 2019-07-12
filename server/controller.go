@@ -30,27 +30,39 @@ func (this *MainController) Options() {
 
 func (this *MainController) SignUp() {
 
-	yourCode := this.GetString("InvitationCode")
-
-	Memo.LockInvitationCode.RLock()
-	myCode := Memo.InvitationCode
-	Memo.LockInvitationCode.RUnlock()
-
+	// first thing first
 	err := Invitation()
 	if err != nil {
 		logger.Error(err)
 	}
 
-	if yourCode != myCode {
-		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid InvitationCode"}
+	ob := make(map[string]string)
+	err = json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
+	if err != nil {
+		logger.Debug(err)
+	}
+
+	yourCode, ok := ob["InvitationCode"]
+	if !ok {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing InvitationCode"}
 		this.ServeJSON()
 		return
 	}
 
-	name := this.GetString("UserName")
+	name, ok := ob["UserName"]
 
-	if name == "" {
-		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Empty UserName"}
+	if !ok {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing UserName"}
+		this.ServeJSON()
+		return
+	}
+
+	Memo.LockInvitationCode.RLock()
+	myCode := Memo.InvitationCode
+	Memo.LockInvitationCode.RUnlock()
+
+	if yourCode != myCode {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid InvitationCode"}
 		this.ServeJSON()
 		return
 	}
@@ -88,15 +100,22 @@ func (this *MainController) SignUp() {
 }
 
 func (this *MainController) Login() {
-	name := this.GetString("UserName")
-	if name == "" {
+
+	ob := make(map[string]string)
+	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
+	if err != nil {
+		logger.Debug(err)
+	}
+
+	name, ok := ob["UserName"]
+	if !ok {
 		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing UserName"}
 		this.ServeJSON()
 		return
 	}
 
-	yourCode := this.GetString("AuthenticationCode")
-	if yourCode == "" {
+	yourCode, ok := ob["AuthenticationCode"]
+	if !ok {
 		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing AuthenticationCode"}
 		this.ServeJSON()
 		return
@@ -110,7 +129,7 @@ func (this *MainController) Login() {
 	}
 
 	var u models.User
-	err := json.Unmarshal(userBytes, &u)
+	err = json.Unmarshal(userBytes, &u)
 	if err != nil {
 		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
 		this.ServeJSON()
