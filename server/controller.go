@@ -148,7 +148,6 @@ func (this *MainController) Login() {
 	if !verified {
 		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid AuthenticationCode"}
 		this.ServeJSON()
-		logger.Error(err)
 		return
 	}
 
