@@ -1,5 +1,42 @@
 # hubble 接口文档
 
+## /user/*
+账户相关
+
+### POST /user/SignUp
+POST body
+```json
+{
+	"InvitationCode":"7SX6IBW5ZNP7JVNV2NN55GNZI5ENVADW", // 发布在钉钉群中，最新的一个有效
+	"UserName":"Yushi" // 非空
+}
+```
+
+当返回的 status 为 200 时， message 中 包含 URI 用来生成二维码
+```json
+{
+  "message": "otpauth://totp/Hubble:Yushi?issuer=Hubble&secret=OIWHT3DFW5XRGLPG",
+  "status": 200
+}
+```
+
+### POST /user/Login
+POST body
+```json
+{
+	"AuthenticationCode":"166657",
+	"UserName":"Yushi"
+}
+```
+
+当返回的 status 为 200 时， message 中 包含 token 用来认证对其他接口的访问
+```json
+{
+  "message": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiWXVzaGkiLCJSb2xlIjoiIiwiZXhwIjoxNTYyOTIyMTExLCJpYXQiOjE1NjI5MjE4MTF9.4nPW2V-M8UywEg-TFiyv28gDS5oklNs0PsvFSW4AHEQ",
+  "status": 200
+}
+```
+
 ## /marketData/*
 连行情服务器
 
