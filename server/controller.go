@@ -1,8 +1,10 @@
 package server
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/base32"
+	"encoding/gob"
 	"encoding/json"
 	"time"
 
@@ -121,7 +123,11 @@ func (this *MainController) SignUp() {
 	var u models.User
 	u.Secret = secret
 	u.Role = ""
-	b, err := json.Marshal(u)
+
+	buf := new(bytes.Buffer)
+	encoder := gob.NewEncoder(buf)
+	err = encoder.Encode(u)
+
 	if err != nil {
 		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
 		this.ServeJSON()
@@ -129,7 +135,7 @@ func (this *MainController) SignUp() {
 		return
 	}
 
-	err = boltwrapper.UserDB.SetUser(name, b)
+	err = boltwrapper.UserDB.SetUser(name, buf.Bytes())
 	if err != nil {
 		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
 		this.ServeJSON()
@@ -174,7 +180,9 @@ func (this *MainController) Login() {
 	}
 
 	var u models.User
-	err = json.Unmarshal(userBytes, &u)
+	buf := new(bytes.Buffer)
+	decoder := gob.NewDecoder(buf)
+	err = decoder.Decode(&u)
 	if err != nil {
 		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
 		this.ServeJSON()
