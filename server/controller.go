@@ -29,7 +29,7 @@ func (this *MainController) Options() {
 	// 	logger.Debug(err)
 	// }
 	// logger.Debug(string(requestDump))
-	this.Data["json"] = map[string]interface{}{"status": 200, "message": "ok"}
+	this.Data["json"] = map[string]interface{}{"status": 200, "message": "OK"}
 	this.ServeJSON()
 }
 
@@ -267,6 +267,41 @@ func (this *MainController) List() {
 	}
 
 	this.Ctx.ResponseWriter.Write(jsonBytes)
+}
+
+func (this *MainController) Retire() {
+	yourCode := this.GetString("Root")
+	if yourCode == "" {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing Root"}
+		this.ServeJSON()
+		return
+	}
+
+	verified, err := gawrapper.VerifyTOTP(config.Conf.RootKey, yourCode)
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
+	if !verified {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid Root"}
+		this.ServeJSON()
+		return
+	}
+
+	name := this.GetString("UserName")
+
+	err = boltwrapper.UserDB.DelUser(name)
+
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		return
+	}
+
+	this.Data["json"] = map[string]interface{}{"status": 200, "message": "OK"}
+	this.ServeJSON()
 }
 
 // @router /marketData/STATUS [get]

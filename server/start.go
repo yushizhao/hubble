@@ -47,6 +47,7 @@ func StartServer() {
 	beego.Router("/user/SignUp", &MainController{}, "post:SignUp")
 	beego.Router("/user/Login", &MainController{}, "post:Login")
 	beego.Router("/user/List", &MainController{}, "get:List")
+	beego.Router("/user/Retire", &MainController{}, "get:Retire")
 	beego.Router("/marketData/STATUS", &MainController{}, "get:STATUS")
 	beego.Router("/marketData/TRADEx", &MainController{}, "get:TRADEx")
 	beego.Router("/marketData/KLINE", &MainController{}, "post:KLINE")
