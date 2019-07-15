@@ -1,6 +1,8 @@
 package server
 
 import (
+	"crypto/rand"
+	"encoding/base32"
 	"encoding/json"
 	"time"
 
@@ -27,6 +29,42 @@ func (this *MainController) Options() {
 	// logger.Debug(string(requestDump))
 	this.Data["json"] = map[string]interface{}{"status": 200, "message": "ok"}
 	this.ServeJSON()
+}
+
+func (this *MainController) Invite() {
+	yourCode := this.GetString("Root")
+	if yourCode == "" {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing Root"}
+		this.ServeJSON()
+		return
+	}
+
+	verified, err := gawrapper.VerifyTOTP(config.Conf.RootKey, yourCode)
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
+	if !verified {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid Root"}
+		this.ServeJSON()
+		return
+	}
+
+	b := make([]byte, 10)
+	rand.Read(b)
+
+	invitationCode := base32.StdEncoding.EncodeToString(b)[:6]
+	exp := time.Now().Unix() + config.Conf.InvitationExpire
+
+	Memo.LockInvitationCode.Lock()
+	Memo.InvitationCode[invitationCode] = exp
+	Memo.LockInvitationCode.Unlock()
+
+	this.Data["json"] = map[string]interface{}{"status": 200, "message": invitationCode}
+	this.ServeJSON()
+	return
 }
 
 func (this *MainController) SignUp() {

@@ -43,6 +43,7 @@ func StartServer() {
 	beego.InsertFilter("/trading/*", beego.BeforeRouter, FilterJWT)
 
 	beego.Router("*", &MainController{}, "options:Options")
+	beego.Router("/user/Invite", &MainController{}, "get:Invite")
 	beego.Router("/user/SignUp", &MainController{}, "post:SignUp")
 	beego.Router("/user/Login", &MainController{}, "post:Login")
 	beego.Router("/marketData/STATUS", &MainController{}, "get:STATUS")
