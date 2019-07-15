@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/yushizhao/authenticator/boltwrapper"
 	"github.com/yushizhao/authenticator/jwtwrapper"
@@ -30,19 +31,20 @@ func (this *MainController) Options() {
 
 func (this *MainController) SignUp() {
 
-	// first thing first
-	Memo.LockInvitationCode.RLock()
-	myCode := Memo.InvitationCode
-	Memo.LockInvitationCode.RUnlock()
+	Memo.LockInvitationCode.Lock()
+	defer Memo.LockInvitationCode.Unlock()
 
-	// second thing second
-	err := Invitation()
-	if err != nil {
-		logger.Error(err)
+	// clean outdated code
+	now := time.Now().Unix()
+	for k, v := range Memo.InvitationCode {
+		if v < now {
+			delete(Memo.InvitationCode, k)
+		}
 	}
 
+	// read post body
 	ob := make(map[string]string)
-	err = json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
+	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
 	if err != nil {
 		logger.Debug(err)
 	}
@@ -62,8 +64,9 @@ func (this *MainController) SignUp() {
 		return
 	}
 
-	if yourCode != myCode {
-		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid InvitationCode"}
+	// check code
+	if _, ok := Memo.InvitationCode[yourCode]; !ok {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid Invitation Code"}
 		this.ServeJSON()
 		return
 	}
@@ -96,8 +99,11 @@ func (this *MainController) SignUp() {
 		return
 	}
 
+	delete(Memo.InvitationCode, yourCode)
+
 	this.Data["json"] = map[string]interface{}{"status": 200, "message": gawrapper.NewOTPAuth(name, secret, ISSUER)}
 	this.ServeJSON()
+	return
 }
 
 func (this *MainController) Login() {

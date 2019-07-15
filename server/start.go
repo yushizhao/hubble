@@ -1,13 +1,8 @@
 package server
 
 import (
-	"encoding/base32"
-	"math/rand"
-	"time"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
-	"github.com/wonderivan/logger"
 	"github.com/yushizhao/authenticator/boltwrapper"
 	"github.com/yushizhao/hubble/config"
 	"github.com/yushizhao/hubble/ding"
@@ -21,19 +16,6 @@ var TradingSource *rediswrapper.Client
 var GalaxySource *rediswrapper.Client
 
 var InvitationDing ding.Ding
-
-func Invitation() error {
-	Memo.LockInvitationCode.Lock()
-	defer Memo.LockInvitationCode.Unlock()
-
-	b := make([]byte, 20)
-	rand.Read(b)
-	Memo.InvitationCode = base32.StdEncoding.EncodeToString(b)
-
-	resp, err := InvitationDing.Send(Memo.InvitationCode)
-	logger.Info(resp)
-	return err
-}
 
 func StartServer() {
 
@@ -81,13 +63,6 @@ func StartServer() {
 	TaskWriteReport()
 	toolbox.StartTask()
 	defer toolbox.StopTask()
-
-	InvitationDing = ding.NewDing(config.Conf.Ding, ding.InvitationCodeTemplate, ding.MarkdownJsonTemplate)
-	rand.Seed(time.Now().Unix())
-	err := Invitation()
-	if err != nil {
-		logger.Error(err)
-	}
 
 	beego.Run()
 }

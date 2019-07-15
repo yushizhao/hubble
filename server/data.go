@@ -10,7 +10,7 @@ import (
 )
 
 type MEMO struct {
-	InvitationCode string
+	InvitationCode map[string]int64
 	// Exchanges           []string
 	// Symbols             []string
 	SymbolsMapExchanges map[string][]string
@@ -20,7 +20,7 @@ type MEMO struct {
 	GalaxyStatusMemo    models.GalaxyStatus
 	StrategyStatusMap   map[string]models.StrategyStatus
 
-	LockInvitationCode sync.RWMutex // Write in POST /user/SignUp & TaskWriteReport, Read in POST /user/SignUp
+	LockInvitationCode sync.RWMutex // Write in POST /user/SignUp & /user/Invite, Read in POST /user/SignUp
 	// LockExchanges           sync.RWMutex // Write in marketData/STATUS call, read in nowhere
 	// LockSymbols             sync.RWMutex // Write in UpdateFromDepth, read in nowhere
 	LockSymbolsMapExchanges sync.RWMutex // Write in UpdateFromDepth, read in DEPTH call
@@ -39,6 +39,7 @@ func init() {
 	Memo.SymbolsMapExchanges = make(map[string][]string)
 	Memo.SymbolsMapLastTrade = make(map[string]models.TRADE)
 	Memo.StrategyStatusMap = make(map[string]models.StrategyStatus)
+	Memo.InvitationCode = make(map[string]int64)
 
 	data, err := ioutil.ReadFile("account.json")
 	if err != nil {
