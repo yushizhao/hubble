@@ -181,6 +181,7 @@ func (this *MainController) Login() {
 
 	var u models.User
 	buf := new(bytes.Buffer)
+	buf.Write(userBytes)
 	decoder := gob.NewDecoder(buf)
 	err = decoder.Decode(&u)
 	if err != nil {
@@ -219,6 +220,53 @@ func (this *MainController) Login() {
 	this.Data["json"] = map[string]interface{}{"status": 200, "message": token}
 	this.ServeJSON()
 	return
+}
+
+func (this *MainController) List() {
+	yourCode := this.GetString("Root")
+	if yourCode == "" {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Missing Root"}
+		this.ServeJSON()
+		return
+	}
+
+	verified, err := gawrapper.VerifyTOTP(config.Conf.RootKey, yourCode)
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
+		this.ServeJSON()
+		logger.Error(err)
+		return
+	}
+	if !verified {
+		this.Data["json"] = map[string]interface{}{"status": 400, "message": "Invalid Root"}
+		this.ServeJSON()
+		return
+	}
+
+	userMapRaw := boltwrapper.UserDB.ListUser()
+
+	buf := new(bytes.Buffer)
+	decoder := gob.NewDecoder(buf)
+
+	userMap := make(map[string]models.User)
+	for k, v := range userMapRaw {
+		var tmp models.User
+		buf.Reset()
+		buf.Write(v)
+		err = decoder.Decode(&tmp)
+		if err != nil {
+			logger.Warn("Wrong User Data: %s", k)
+		}
+		userMap[k] = tmp
+	}
+
+	jsonBytes, err := json.Marshal(userMap)
+
+	if err != nil {
+		logger.Error(err)
+	}
+
+	this.Ctx.ResponseWriter.Write(jsonBytes)
 }
 
 // @router /marketData/STATUS [get]
