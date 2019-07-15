@@ -29,8 +29,7 @@ func (this *MainController) Options() {
 	// 	logger.Debug(err)
 	// }
 	// logger.Debug(string(requestDump))
-	this.Data["json"] = map[string]interface{}{"status": 200, "message": "OK"}
-	this.ServeJSON()
+	this.Ctx.WriteString("Welcome! This is Hubble.")
 }
 
 func (this *MainController) Invite() {
@@ -300,7 +299,7 @@ func (this *MainController) Retire() {
 		return
 	}
 
-	this.Data["json"] = map[string]interface{}{"status": 200, "message": "OK"}
+	this.Data["json"] = map[string]interface{}{"status": 200, "message": name}
 	this.ServeJSON()
 }
 
