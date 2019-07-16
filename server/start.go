@@ -9,8 +9,6 @@ import (
 	"github.com/yushizhao/hubble/rediswrapper"
 )
 
-// var RedisClients map[string]*radix.Sentinel
-
 var MarketDataSource *rediswrapper.Client
 var TradingSource *rediswrapper.Client
 var GalaxySource *rediswrapper.Client
@@ -20,7 +18,6 @@ var InvitationDing ding.Ding
 func StartServer() {
 
 	boltwrapper.InitDB()
-	// RedisClients = redis.NewSentinels(models.MasterNames, config.Server.Sentinels, config.Server.SentinelPassword, config.Server.ServerPassword)
 
 	MarketDataSource = rediswrapper.NewClient(config.Server.MarketData.Addr, config.Server.MarketData.Pass, 3, 60)
 	TradingSource = rediswrapper.NewClient(config.Server.Trading.Addr, config.Server.Trading.Pass, 3, 60)
