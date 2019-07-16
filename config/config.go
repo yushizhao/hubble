@@ -30,7 +30,7 @@ type SConfig struct {
 	RootKey string
 }
 
-var Conf SConfig
+var Server SConfig
 
 type AddrPass struct {
 	Addr string
@@ -53,6 +53,6 @@ func ReadConfig() error {
 		return err
 	}
 
-	Conf = v
+	Server = v
 	return nil
 }

@@ -135,7 +135,7 @@ func Backup() error {
 }
 
 func TaskWriteReport() {
-	writeReport := toolbox.NewTask("writeReport", config.Conf.ReportSchedule, func() (err error) {
+	writeReport := toolbox.NewTask("writeReport", config.Server.ReportSchedule, func() (err error) {
 		logger.Info("run writeReport at: %s\n", time.Now())
 
 		Memo.LockRealtimeAccounts.RLock()

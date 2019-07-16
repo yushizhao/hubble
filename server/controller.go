@@ -38,7 +38,7 @@ func (this *MainController) Invite() {
 	rand.Read(b)
 
 	invitationCode := base32.StdEncoding.EncodeToString(b)[:6]
-	exp := time.Now().Unix() + config.Conf.InvitationExpire
+	exp := time.Now().Unix() + config.Server.InvitationExpire
 
 	Memo.LockInvitationCode.Lock()
 	Memo.InvitationCode[invitationCode] = exp
@@ -230,7 +230,7 @@ func (this *MainController) Login() {
 		"Role": u.Role,
 	}
 
-	token, err := jwtwrapper.IssueTokenStrWithExp(claims, config.Conf.JWTSecret, config.Conf.JWTExpire)
+	token, err := jwtwrapper.IssueTokenStrWithExp(claims, config.Server.JWTSecret, config.Server.JWTExpire)
 	if err != nil {
 		this.Data["json"] = map[string]interface{}{"status": 500, "message": "Internal Server Error"}
 		this.ServeJSON()

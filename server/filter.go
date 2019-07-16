@@ -24,7 +24,7 @@ var FilterJWT = func(ctx *context.Context) {
 		ctx.Abort(401, "Missing Token")
 	}
 
-	claims, err := jwtwrapper.GetMapClaims(token, config.Conf.JWTSecret)
+	claims, err := jwtwrapper.GetMapClaims(token, config.Server.JWTSecret)
 	if err != nil {
 		ctx.Abort(401, err.Error())
 	}
@@ -46,7 +46,7 @@ var FilterRootTOTP = func(ctx *context.Context) {
 		ctx.Abort(401, "Missing Root")
 	}
 
-	verified, err := gawrapper.VerifyTOTP(config.Conf.RootKey, yourCode)
+	verified, err := gawrapper.VerifyTOTP(config.Server.RootKey, yourCode)
 	if err != nil {
 		ctx.Abort(500, err.Error())
 	}

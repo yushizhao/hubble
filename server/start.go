@@ -20,11 +20,11 @@ var InvitationDing ding.Ding
 func StartServer() {
 
 	boltwrapper.InitDB()
-	// RedisClients = redis.NewSentinels(models.MasterNames, config.Conf.Sentinels, config.Conf.SentinelPassword, config.Conf.ServerPassword)
+	// RedisClients = redis.NewSentinels(models.MasterNames, config.Server.Sentinels, config.Server.SentinelPassword, config.Server.ServerPassword)
 
-	MarketDataSource = rediswrapper.NewClient(config.Conf.MarketData.Addr, config.Conf.MarketData.Pass, 3, 60)
-	TradingSource = rediswrapper.NewClient(config.Conf.Trading.Addr, config.Conf.Trading.Pass, 3, 60)
-	GalaxySource = rediswrapper.NewClient(config.Conf.Galaxy.Addr, config.Conf.Galaxy.Pass, 3, 60)
+	MarketDataSource = rediswrapper.NewClient(config.Server.MarketData.Addr, config.Server.MarketData.Pass, 3, 60)
+	TradingSource = rediswrapper.NewClient(config.Server.Trading.Addr, config.Server.Trading.Pass, 3, 60)
+	GalaxySource = rediswrapper.NewClient(config.Server.Galaxy.Addr, config.Server.Galaxy.Pass, 3, 60)
 
 	go UpdateFromDepth()
 	go SubscribeTrade()
@@ -34,7 +34,7 @@ func StartServer() {
 	beego.BConfig.CopyRequestBody = true
 	beego.BConfig.Listen.EnableHTTPS = true
 	beego.BConfig.Listen.EnableHTTP = false
-	beego.BConfig.Listen.HTTPSPort = config.Conf.Port
+	beego.BConfig.Listen.HTTPSPort = config.Server.Port
 	beego.BConfig.Listen.HTTPSCertFile = "config/quant.crt"
 	beego.BConfig.Listen.HTTPSKeyFile = "config/quant.key"
 	beego.BConfig.WebConfig.Session.SessionOn = true
