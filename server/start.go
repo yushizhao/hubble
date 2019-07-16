@@ -41,13 +41,14 @@ func StartServer() {
 
 	beego.InsertFilter("*", beego.BeforeRouter, FilterCrossDomain)
 	beego.InsertFilter("/trading/*", beego.BeforeRouter, FilterJWT)
+	beego.InsertFilter("/root/*", beego.BeforeRouter, FilterRootTOTP)
 
 	beego.Router("*", &MainController{}, "options:Options")
-	beego.Router("/user/Invite", &MainController{}, "get:Invite")
+	beego.Router("/root/Invite", &MainController{}, "get:Invite")
+	beego.Router("/root/List", &MainController{}, "get:List")
+	beego.Router("/root/Retire", &MainController{}, "get:Retire")
 	beego.Router("/user/SignUp", &MainController{}, "post:SignUp")
 	beego.Router("/user/Login", &MainController{}, "post:Login")
-	beego.Router("/user/List", &MainController{}, "get:List")
-	beego.Router("/user/Retire", &MainController{}, "get:Retire")
 	beego.Router("/marketData/STATUS", &MainController{}, "get:STATUS")
 	beego.Router("/marketData/TRADEx", &MainController{}, "get:TRADEx")
 	beego.Router("/marketData/KLINE", &MainController{}, "post:KLINE")
