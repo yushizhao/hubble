@@ -3,7 +3,8 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
+
+	"github.com/wonderivan/logger"
 )
 
 type SConfig struct {
@@ -34,15 +35,12 @@ type AddrPass struct {
 }
 
 func ReadConfig() error {
-	file, err := os.Open("hubble.json")
+
+	data, err := ioutil.ReadFile("hubble.json")
 	if err != nil {
-		return err
+		logger.Warn(err)
 	}
-	defer file.Close()
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		return err
-	}
+
 	v := SConfig{}
 	err = json.Unmarshal(data, &v)
 	if err != nil {
