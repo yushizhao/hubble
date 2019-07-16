@@ -9,10 +9,6 @@ import (
 type SConfig struct {
 	Port int
 
-	Sentinels        []string
-	SentinelPassword string
-
-	// ServerPassword   string
 	Trading    AddrPass
 	MarketData AddrPass
 	OMS        AddrPass
