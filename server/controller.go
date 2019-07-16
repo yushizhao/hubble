@@ -29,7 +29,7 @@ func (this *MainController) Options() {
 	// 	logger.Debug(err)
 	// }
 	// logger.Debug(string(requestDump))
-	this.Ctx.WriteString("Welcome! This is Hubble.")
+	this.Ctx.WriteString(ISSUER)
 }
 
 func (this *MainController) Invite() {
