@@ -37,7 +37,7 @@ func StartServer() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
 	beego.InsertFilter("*", beego.BeforeRouter, FilterCrossDomain)
-	beego.InsertFilter("/trading/*", beego.BeforeRouter, FilterJWT)
+	// beego.InsertFilter("/trading/*", beego.BeforeRouter, FilterJWT)
 	beego.InsertFilter("/root/*", beego.BeforeRouter, FilterRootTOTP)
 
 	beego.Router("*", &MainController{}, "options:Options")
