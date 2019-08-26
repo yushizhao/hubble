@@ -60,6 +60,10 @@ func StartServer() {
 
 	beego.Router("/galaxy/GalaxyDetail", &GalaxyController{}, "get:GalaxyDetail")
 	beego.Router("/galaxy/StrategyList", &GalaxyController{}, "get:StrategyList")
+	beego.Router("/galaxy/StrategySummary", &GalaxyController{}, "post:StrategySummary")
+	beego.Router("/galaxy/StrategyUserDefine", &GalaxyController{}, "post:StrategyUserDefine")
+	beego.Router("/galaxy/StrategyTrade", &GalaxyController{}, "post:StrategyTrade")
+	beego.Router("/galaxy/StrategyOrder", &GalaxyController{}, "post:StrategyOrder")
 
 	TaskWriteReport()
 	toolbox.StartTask()

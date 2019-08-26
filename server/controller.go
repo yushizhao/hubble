@@ -442,3 +442,55 @@ func (this *GalaxyController) StrategyList() {
 	}
 	this.Ctx.ResponseWriter.Write(b)
 }
+
+func (this *GalaxyController) StrategySummary() {
+	// this.Ctx.WriteString(models.MOCK_GSTATUS)
+	// return
+	Memo.LockGalaxyStatusMemo.RLock()
+	b, err := json.Marshal(Memo.GalaxyStatusMemo)
+	Memo.LockGalaxyStatusMemo.RUnlock()
+
+	if err != nil {
+		logger.Error(err)
+	}
+	this.Ctx.ResponseWriter.Write(b)
+}
+
+func (this *GalaxyController) StrategyUserDefine() {
+	// this.Ctx.WriteString(models.MOCK_STRATEGY)
+	// return
+	Memo.LockStrategyStatusMap.RLock()
+	b, err := json.Marshal(Memo.StrategyStatusMap)
+	Memo.LockStrategyStatusMap.RUnlock()
+
+	if err != nil {
+		logger.Error(err)
+	}
+	this.Ctx.ResponseWriter.Write(b)
+}
+
+func (this *GalaxyController) StrategyTrade() {
+	// this.Ctx.WriteString(models.MOCK_GSTATUS)
+	// return
+	Memo.LockGalaxyStatusMemo.RLock()
+	b, err := json.Marshal(Memo.GalaxyStatusMemo)
+	Memo.LockGalaxyStatusMemo.RUnlock()
+
+	if err != nil {
+		logger.Error(err)
+	}
+	this.Ctx.ResponseWriter.Write(b)
+}
+
+func (this *GalaxyController) StrategyOrder() {
+	// this.Ctx.WriteString(models.MOCK_STRATEGY)
+	// return
+	Memo.LockStrategyStatusMap.RLock()
+	b, err := json.Marshal(Memo.StrategyStatusMap)
+	Memo.LockStrategyStatusMap.RUnlock()
+
+	if err != nil {
+		logger.Error(err)
+	}
+	this.Ctx.ResponseWriter.Write(b)
+}
