@@ -5,8 +5,10 @@ import (
 	"encoding/gob"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/iancoleman/orderedmap"
+	"github.com/yushizhao/hubble/config"
 )
 
 type User struct {
@@ -391,14 +393,15 @@ type StrategyTrade struct {
 }
 
 type StrategyOrder struct {
-	StrategyName string
-	InstrumentID string
-	Price        float64
-	Volume       float64
-	TradePrice   float64
-	TradeVolume  float64
-	OrderStatus  string
-	UpdateTime   string
+	StrategyName    string
+	InstrumentID    string
+	Price           float64
+	Volume          float64
+	TradePrice      float64
+	TradeVolume     float64
+	StrategyOrderID string
+	OrderStatus     string
+	UpdateTime      string
 }
 
 type StrategyMessageSet struct {
@@ -408,4 +411,92 @@ type StrategyMessageSet struct {
 	UserDefine      []StrategyUserDefine
 	Trade           []StrategyTrade
 	Order           []StrategyOrder
+}
+
+func (set *StrategyMessageSet) InsertSummary(that StrategySummary) error {
+	t, err := time.Parse(updateTimeLayout, that.UpdateTime)
+	if err != nil {
+		return err
+	}
+	set.UpdateTimestamp = t.Unix()
+
+	set.Summary = that
+
+	return nil
+}
+
+func (set *StrategyMessageSet) InsertMarket(that StrategyMarket) error {
+	t, err := time.Parse(updateTimeLayout, that.UpdateTime)
+	if err != nil {
+		return err
+	}
+	set.UpdateTimestamp = t.Unix()
+
+	set.Market[that.InstrumentID] = that
+
+	return nil
+}
+
+func (set *StrategyMessageSet) InsertUserDefine(that StrategyUserDefine) error {
+	t, err := time.Parse(updateTimeLayout, that.UpdateTime)
+	if err != nil {
+		return err
+	}
+	set.UpdateTimestamp = t.Unix()
+
+	if len(set.UserDefine) == config.Server.UserDefineLimit {
+		set.UserDefine = append([]StrategyUserDefine{that}, set.UserDefine[:(config.Server.UserDefineLimit-1)]...)
+	} else {
+		set.UserDefine = append([]StrategyUserDefine{that}, set.UserDefine...)
+	}
+
+	return nil
+}
+
+func (set *StrategyMessageSet) InsertTrade(that StrategyTrade) error {
+	t, err := time.Parse(updateTimeLayout, that.UpdateTime)
+	if err != nil {
+		return err
+	}
+	set.UpdateTimestamp = t.Unix()
+
+	if len(set.Trade) == config.Server.TradeLimit {
+		set.Trade = append([]StrategyTrade{that}, set.Trade[:(config.Server.TradeLimit-1)]...)
+	} else {
+		set.Trade = append([]StrategyTrade{that}, set.Trade...)
+	}
+
+	return nil
+}
+
+func (set *StrategyMessageSet) InsertOrder(that StrategyOrder) error {
+	t, err := time.Parse(updateTimeLayout, that.UpdateTime)
+	if err != nil {
+		return err
+	}
+	set.UpdateTimestamp = t.Unix()
+
+	NewOrder := []StrategyOrder{that}
+
+	hasFound := false
+	for i, v := range set.Order {
+		if v.StrategyOrderID == that.StrategyOrderID {
+			NewOrder = append(NewOrder, set.Order[:i]...)
+			NewOrder = append(NewOrder, set.Order[(i+1):]...)
+			hasFound = true
+			break
+		}
+	}
+
+	if hasFound {
+		set.Order = NewOrder
+	} else {
+		if len(set.Order) == config.Server.OrderLimit {
+			set.Order = append(NewOrder, set.Order[:(config.Server.TradeLimit-1)]...)
+		} else {
+			set.Order = append(NewOrder, set.Order...)
+		}
+	}
+
+	return nil
 }
