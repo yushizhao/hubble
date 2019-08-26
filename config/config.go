@@ -25,6 +25,11 @@ type SConfig struct {
 	InvitationExpire int64
 
 	RootKey string
+
+	StrategyExpire  int
+	UserDefineLimit int
+	TradeLimit      int
+	OrderLimit      int
 }
 
 var Server SConfig
