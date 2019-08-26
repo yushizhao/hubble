@@ -86,45 +86,6 @@ type StrategyStatus struct {
 	UpdateTime string
 }
 
-type StrategySummary struct {
-	Active     int
-	Position   map[string]float64
-	Account    map[string]float64
-	UpdateTime string
-}
-
-type StrategyMarket struct {
-	StrategyName string
-	InstrumentID string
-	AskPrice1    float64
-	BidPrice1    float64
-	AskVolume1   float64
-	BidVolume1   float64
-	UpdateTime   string
-}
-
-type StrategyTrade struct {
-	StrategyName    string
-	InstrumentID    string
-	TradePrice      float64
-	TradeVolume     float64
-	BaseCurrency    string
-	Fee             float64
-	StrategyOrderID string
-	UpdateTime      string
-}
-
-type StrategyOrder struct {
-	StrategyName string
-	InstrumentID string
-	Price        float64
-	Volume       float64
-	TradePrice   float64
-	TradeVolume  float64
-	OrderStatus  string
-	UpdateTime   string
-}
-
 func (this *DEPTH) Output() (o OutDEPTH, err error) {
 	outDEPTH := OutDEPTH{
 		Msg_seq:    this.Msg_seq,
@@ -393,4 +354,58 @@ func PhysicalTotal(these []Account) ([]Account, error) {
 	total := Account{"TOTAL", "TOTAL", portfolio}
 	these = append(these, total)
 	return these, nil
+}
+
+type StrategySummary struct {
+	Active     int
+	Position   map[string]float64
+	Account    map[string]float64
+	UpdateTime string
+}
+
+type StrategyMarket struct {
+	StrategyName string
+	InstrumentID string
+	AskPrice1    float64
+	BidPrice1    float64
+	AskVolume1   float64
+	BidVolume1   float64
+	UpdateTime   string
+}
+
+type StrategyUserDefine struct {
+	StrategyName string
+	UserDefine   map[string]string
+	UpdateTime   string
+}
+
+type StrategyTrade struct {
+	StrategyName    string
+	InstrumentID    string
+	TradePrice      float64
+	TradeVolume     float64
+	BaseCurrency    string
+	Fee             float64
+	StrategyOrderID string
+	UpdateTime      string
+}
+
+type StrategyOrder struct {
+	StrategyName string
+	InstrumentID string
+	Price        float64
+	Volume       float64
+	TradePrice   float64
+	TradeVolume  float64
+	OrderStatus  string
+	UpdateTime   string
+}
+
+type StrategyMessageSet struct {
+	UpdateTimestamp int64
+	Summary         StrategySummary
+	Market          map[string]StrategyMarket
+	UserDefine      []StrategyUserDefine
+	Trade           []StrategyTrade
+	Order           []StrategyOrder
 }
