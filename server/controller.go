@@ -19,11 +19,11 @@ import (
 	"github.com/yushizhao/hubble/models"
 )
 
-type MainController struct {
+type AdminController struct {
 	beego.Controller
 }
 
-func (this *MainController) Options() {
+func (this *AdminController) Options() {
 	// requestDump, err := httputil.DumpRequest(this.Ctx.Request, true)
 	// if err != nil {
 	// 	logger.Debug(err)
@@ -32,7 +32,7 @@ func (this *MainController) Options() {
 	this.Ctx.WriteString(ISSUER)
 }
 
-func (this *MainController) Invite() {
+func (this *AdminController) Invite() {
 
 	b := make([]byte, 10)
 	rand.Read(b)
@@ -48,7 +48,7 @@ func (this *MainController) Invite() {
 	return
 }
 
-func (this *MainController) List() {
+func (this *AdminController) List() {
 
 	userMapRaw := boltwrapper.UserDB.ListUser()
 
@@ -76,7 +76,7 @@ func (this *MainController) List() {
 	this.Ctx.ResponseWriter.Write(jsonBytes)
 }
 
-func (this *MainController) Retire() {
+func (this *AdminController) Retire() {
 
 	name := this.GetString("UserName")
 
@@ -90,7 +90,7 @@ func (this *MainController) Retire() {
 	this.Ctx.WriteString(name)
 }
 
-func (this *MainController) SignUp() {
+func (this *AdminController) SignUp() {
 
 	Memo.LockInvitationCode.Lock()
 	defer Memo.LockInvitationCode.Unlock()
@@ -171,7 +171,7 @@ func (this *MainController) SignUp() {
 	return
 }
 
-func (this *MainController) Login() {
+func (this *AdminController) Login() {
 
 	ob := make(map[string]string)
 	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
@@ -243,8 +243,12 @@ func (this *MainController) Login() {
 	return
 }
 
+type MarketDataController struct {
+	beego.Controller
+}
+
 // @router /marketData/STATUS [get]
-func (this *MainController) STATUS() {
+func (this *MarketDataController) STATUS() {
 	// this.Ctx.WriteString(models.MOCK_STATUS)
 	// return
 	exchanges, err := MarketDataSource.HKeys("STATUS")
@@ -276,7 +280,7 @@ func (this *MainController) STATUS() {
 }
 
 // @router /marketData/TRADEx [get]
-func (this *MainController) TRADEx() {
+func (this *MarketDataController) TRADEx() {
 	// this.Ctx.WriteString(models.MOCK_TRADEx)
 	// return
 	Memo.LockSymbolsMapLastTrade.RLock()
@@ -290,7 +294,7 @@ func (this *MainController) TRADEx() {
 	this.Ctx.ResponseWriter.Write(jsonBytes)
 }
 
-func (this *MainController) KLINE() {
+func (this *MarketDataController) KLINE() {
 	// this.Ctx.WriteString(models.MOCK_KLINE)
 	// return
 	ob := make(map[string]string)
@@ -309,7 +313,7 @@ func (this *MainController) KLINE() {
 	this.Ctx.ResponseWriter.Write(b)
 }
 
-func (this *MainController) DEPTHx() {
+func (this *MarketDataController) DEPTHx() {
 	// this.Ctx.WriteString(models.MOCK_DEPTHx)
 	// return
 	ob := make(map[string]string)
@@ -352,27 +356,21 @@ func (this *MainController) DEPTHx() {
 	this.Ctx.ResponseWriter.Write(jsonBytes)
 }
 
-func (this *MainController) TSTATUS() {
+type TradingController struct {
+	beego.Controller
+}
+
+func (this *TradingController) STATUS() {
 	this.Ctx.WriteString(models.MOCK_TSTATUS)
 	// return
 }
 
-func (this *MainController) MYORDERS() {
+func (this *TradingController) MYORDERS() {
 	this.Ctx.WriteString(models.MOCK_DEPTHx)
 	// return
 }
 
-func (this *MainController) GALAXY() {
-	this.Ctx.WriteString(models.MOCK_GALAXY)
-	// return
-}
-
-func (this *MainController) SINGULARITY() {
-	this.Ctx.WriteString(models.MOCK_SINGULARITY)
-	// return
-}
-
-func (this *MainController) ACCOUNTNAME() {
+func (this *TradingController) ACCOUNTNAME() {
 	// this.Ctx.WriteString(models.MOCK_ACCOUNTNAME)
 	// return
 	tmp := make(map[string][]string)
@@ -398,7 +396,7 @@ func (this *MainController) ACCOUNTNAME() {
 	this.Ctx.ResponseWriter.Write(b)
 }
 
-func (this *MainController) ACCOUNT() {
+func (this *TradingController) ACCOUNT() {
 	// this.Ctx.WriteString(models.MOCK_ACCOUNT)
 	// return
 	Memo.LockRealtimeAccounts.RLock()
@@ -411,7 +409,11 @@ func (this *MainController) ACCOUNT() {
 	this.Ctx.ResponseWriter.Write(b)
 }
 
-func (this *MainController) GSTATUS() {
+type GalaxyController struct {
+	beego.Controller
+}
+
+func (this *GalaxyController) GalaxyDetail() {
 	// this.Ctx.WriteString(models.MOCK_GSTATUS)
 	// return
 	Memo.LockGalaxyStatusMemo.RLock()
@@ -424,7 +426,7 @@ func (this *MainController) GSTATUS() {
 	this.Ctx.ResponseWriter.Write(b)
 }
 
-func (this *MainController) STRATEGY() {
+func (this *GalaxyController) StrategyList() {
 	// this.Ctx.WriteString(models.MOCK_STRATEGY)
 	// return
 	Memo.LockStrategyStatusMap.RLock()
