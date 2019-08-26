@@ -456,6 +456,19 @@ func (this *GalaxyController) StrategySummary() {
 	this.Ctx.ResponseWriter.Write(b)
 }
 
+func (this *GalaxyController) StrategyMarket() {
+	// this.Ctx.WriteString(models.MOCK_GSTATUS)
+	// return
+	Memo.LockGalaxyStatusMemo.RLock()
+	b, err := json.Marshal(Memo.GalaxyStatusMemo)
+	Memo.LockGalaxyStatusMemo.RUnlock()
+
+	if err != nil {
+		logger.Error(err)
+	}
+	this.Ctx.ResponseWriter.Write(b)
+}
+
 func (this *GalaxyController) StrategyUserDefine() {
 	// this.Ctx.WriteString(models.MOCK_STRATEGY)
 	// return
