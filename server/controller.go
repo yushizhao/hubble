@@ -409,6 +409,10 @@ func (this *TradingController) ACCOUNT() {
 	this.Ctx.ResponseWriter.Write(b)
 }
 
+// func (this *TradingController) PORTIFOLIO() {
+// 	this.Ctx.WriteString(models.MOCK_PORTIFOLIO)
+// }
+
 type GalaxyController struct {
 	beego.Controller
 }
@@ -438,7 +442,3 @@ func (this *GalaxyController) StrategyList() {
 	}
 	this.Ctx.ResponseWriter.Write(b)
 }
-
-// func (this *MainController) PORTIFOLIO() {
-// 	this.Ctx.WriteString(models.MOCK_PORTIFOLIO)
-// }
