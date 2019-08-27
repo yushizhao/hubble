@@ -413,6 +413,19 @@ type StrategyMessageSet struct {
 	Order           []StrategyOrder
 }
 
+func MakeStrategyMessageSet() *StrategyMessageSet {
+	set := new(StrategyMessageSet)
+
+	// summary := new(StrategySummary)
+	// summary.Position = make(map[string]float64)
+	// summary.Account = make(map[string]float64)
+	// set.Summary = *summary
+
+	set.Market = make(map[string]StrategyMarket)
+
+	return set
+}
+
 func (set *StrategyMessageSet) InsertSummary(that StrategySummary) error {
 	t, err := time.Parse(updateTimeLayout, that.UpdateTime)
 	if err != nil {
