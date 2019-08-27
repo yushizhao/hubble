@@ -19,7 +19,7 @@ func NewDing(webhook string, msgTemplate string, jsonTemplate map[string]interfa
 }
 
 func (this *Ding) Send(a ...interface{}) (string, error) {
-	msg := fmt.Sprintf(this.msgTemplate, a)
+	msg := fmt.Sprintf(this.msgTemplate, a...)
 
 	j := this.jsonTemplate
 	if t, ok := j["msgtype"].(string); ok {

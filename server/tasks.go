@@ -11,6 +11,7 @@ import (
 
 	"github.com/astaxie/beego/toolbox"
 	"github.com/yushizhao/hubble/config"
+	"github.com/yushizhao/hubble/emailwrapper"
 )
 
 // func TaskUpdateFromDepth() {
@@ -76,17 +77,18 @@ import (
 
 func Report() error {
 	now := time.Now().Format(time.RFC3339)
-	file, err := os.Create("PnL." + now + ".csv")
+	filename := "PnL." + now + ".csv"
+	file, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
 
 	writer := csv.NewWriter(file)
-	defer writer.Flush()
 
 	for _, a := range Memo.RealtimeAccounts {
 		if a.PhysicalAccount == "TOTAL" {
 			for _, p := range a.LogicalAccount {
+
 				err := writer.Write([]string{p.ClientCode, strconv.FormatFloat(p.PnL, 'g', -1, 64)})
 				if err != nil {
 					return err
@@ -95,7 +97,10 @@ func Report() error {
 		}
 	}
 
-	return nil
+	writer.Flush()
+	file.Close()
+
+	return emailwrapper.Send(filename)
 }
 
 func Backup() error {
