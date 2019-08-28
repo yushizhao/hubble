@@ -31,7 +31,7 @@ func MOCK_MakeStrategyMessageSet(name string) *StrategyMessageSet {
 	summary.Position = make(map[string]float64)
 	summary.Account = make(map[string]float64)
 	summary.Position["BTC_USD@19U"] = 50
-	summary.Position["BTC"] = 20
+	summary.Account["BTC"] = 20
 	summary.UpdateTime = "2019-06-30 00:00:00.123456"
 	set.Summary = *summary
 
