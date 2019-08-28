@@ -247,7 +247,6 @@ type MarketDataController struct {
 	beego.Controller
 }
 
-// @router /marketData/STATUS [get]
 func (this *MarketDataController) STATUS() {
 	// this.Ctx.WriteString(models.MOCK_STATUS)
 	// return
@@ -279,7 +278,6 @@ func (this *MarketDataController) STATUS() {
 	this.Ctx.ResponseWriter.Write(jsonBytes)
 }
 
-// @router /marketData/TRADEx [get]
 func (this *MarketDataController) TRADEx() {
 	// this.Ctx.WriteString(models.MOCK_TRADEx)
 	// return
@@ -431,79 +429,92 @@ func (this *GalaxyController) GalaxyDetail() {
 }
 
 func (this *GalaxyController) StrategyList() {
-	// this.Ctx.WriteString(models.MOCK_STRATEGY)
-	// return
-	Memo.LockStrategyStatusMap.RLock()
-	b, err := json.Marshal(Memo.StrategyStatusMap)
-	Memo.LockStrategyStatusMap.RUnlock()
-
-	if err != nil {
-		logger.Error(err)
-	}
+	b, _ := json.Marshal(models.MOCK_StrategyList)
 	this.Ctx.ResponseWriter.Write(b)
+	return
 }
 
 func (this *GalaxyController) StrategySummary() {
-	// this.Ctx.WriteString(models.MOCK_GSTATUS)
-	// return
-	Memo.LockGalaxyStatusMemo.RLock()
-	b, err := json.Marshal(Memo.GalaxyStatusMemo)
-	Memo.LockGalaxyStatusMemo.RUnlock()
+	ob := make(map[string]string)
+	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
+	if err != nil {
+		logger.Debug(err)
+	}
+
+	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
+	b, err := json.Marshal(set.Summary)
 
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
+	return
 }
 
 func (this *GalaxyController) StrategyMarket() {
-	// this.Ctx.WriteString(models.MOCK_GSTATUS)
-	// return
-	Memo.LockGalaxyStatusMemo.RLock()
-	b, err := json.Marshal(Memo.GalaxyStatusMemo)
-	Memo.LockGalaxyStatusMemo.RUnlock()
+	ob := make(map[string]string)
+	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
+	if err != nil {
+		logger.Debug(err)
+	}
+
+	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
+	b, err := json.Marshal(set.Market)
 
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
+	return
 }
 
 func (this *GalaxyController) StrategyUserDefine() {
-	// this.Ctx.WriteString(models.MOCK_STRATEGY)
-	// return
-	Memo.LockStrategyStatusMap.RLock()
-	b, err := json.Marshal(Memo.StrategyStatusMap)
-	Memo.LockStrategyStatusMap.RUnlock()
+	ob := make(map[string]string)
+	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
+	if err != nil {
+		logger.Debug(err)
+	}
+
+	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
+	b, err := json.Marshal(set.UserDefine)
 
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
+	return
 }
 
 func (this *GalaxyController) StrategyTrade() {
-	// this.Ctx.WriteString(models.MOCK_GSTATUS)
-	// return
-	Memo.LockGalaxyStatusMemo.RLock()
-	b, err := json.Marshal(Memo.GalaxyStatusMemo)
-	Memo.LockGalaxyStatusMemo.RUnlock()
+	ob := make(map[string]string)
+	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
+	if err != nil {
+		logger.Debug(err)
+	}
+
+	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
+	b, err := json.Marshal(set.Trade)
 
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
+	return
 }
 
 func (this *GalaxyController) StrategyOrder() {
-	// this.Ctx.WriteString(models.MOCK_STRATEGY)
-	// return
-	Memo.LockStrategyStatusMap.RLock()
-	b, err := json.Marshal(Memo.StrategyStatusMap)
-	Memo.LockStrategyStatusMap.RUnlock()
+	ob := make(map[string]string)
+	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
+	if err != nil {
+		logger.Debug(err)
+	}
+
+	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
+	b, err := json.Marshal(set.Order)
 
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
+	return
 }
