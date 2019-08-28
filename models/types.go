@@ -359,10 +359,11 @@ func PhysicalTotal(these []Account) ([]Account, error) {
 }
 
 type StrategySummary struct {
-	Active     int
-	Position   map[string]float64
-	Account    map[string]float64
-	UpdateTime string
+	StrategyName string
+	Active       int
+	Position     map[string]float64
+	Account      map[string]float64
+	UpdateTime   string
 }
 
 type StrategyMarket struct {
@@ -384,6 +385,7 @@ type StrategyUserDefine struct {
 type StrategyTrade struct {
 	StrategyName    string
 	InstrumentID    string
+	Direction       string
 	TradePrice      float64
 	TradeVolume     float64
 	BaseCurrency    string
@@ -395,6 +397,7 @@ type StrategyTrade struct {
 type StrategyOrder struct {
 	StrategyName    string
 	InstrumentID    string
+	Direction       string
 	Price           float64
 	Volume          float64
 	TradePrice      float64
