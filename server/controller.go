@@ -429,9 +429,18 @@ func (this *GalaxyController) GalaxyDetail() {
 }
 
 func (this *GalaxyController) StrategyList() {
-	b, _ := json.Marshal(models.MOCK_StrategyList)
+
+	Memo.LockStrategyMessageSetMap.RLock()
+	keys := make([]string, len(Memo.StrategyMessageSetMap))
+	i := 0
+	for k := range Memo.StrategyMessageSetMap {
+		keys[i] = k
+		i++
+	}
+	Memo.LockStrategyMessageSetMap.RLock()
+
+	b, _ := json.Marshal(keys)
 	this.Ctx.ResponseWriter.Write(b)
-	return
 }
 
 func (this *GalaxyController) StrategySummary() {
