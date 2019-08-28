@@ -430,16 +430,30 @@ func (this *GalaxyController) GalaxyDetail() {
 
 func (this *GalaxyController) StrategyList() {
 
-	Memo.LockStrategyMessageSetMap.RLock()
-	keys := make([]string, len(Memo.StrategyMessageSetMap))
-	i := 0
-	for k := range Memo.StrategyMessageSetMap {
-		keys[i] = k
-		i++
-	}
-	Memo.LockStrategyMessageSetMap.RLock()
+	expired := time.Now().Unix() - config.Server.StrategyExpire
 
-	b, _ := json.Marshal(keys)
+	Memo.LockStrategyMessageSetMap.Lock()
+
+	var keys, keysExpired []string
+
+	for k, v := range Memo.StrategyMessageSetMap {
+		if v.UpdateTimestamp > expired {
+			keys = append(keys, k)
+		} else {
+			keysExpired = append(keysExpired, k)
+		}
+	}
+
+	for _, k := range keysExpired {
+		delete(Memo.StrategyMessageSetMap, k)
+	}
+
+	Memo.LockStrategyMessageSetMap.Unlock()
+
+	b, err := json.Marshal(keys)
+	if err != nil {
+		logger.Error(err)
+	}
 	this.Ctx.ResponseWriter.Write(b)
 }
 
@@ -450,14 +464,15 @@ func (this *GalaxyController) StrategySummary() {
 		logger.Debug(err)
 	}
 
-	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
-	b, err := json.Marshal(set.Summary)
+	Memo.LockStrategyMessageSetMap.RLock()
+	summary := Memo.StrategyMessageSetMap[ob["StrategyName"]].Summary
+	Memo.LockStrategyMessageSetMap.RUnlock()
 
+	b, err := json.Marshal(summary)
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
-	return
 }
 
 func (this *GalaxyController) StrategyMarket() {
@@ -467,14 +482,15 @@ func (this *GalaxyController) StrategyMarket() {
 		logger.Debug(err)
 	}
 
-	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
-	b, err := json.Marshal(set.Market)
+	Memo.LockStrategyMessageSetMap.RLock()
+	market := Memo.StrategyMessageSetMap[ob["StrategyName"]].Market
+	Memo.LockStrategyMessageSetMap.RUnlock()
 
+	b, err := json.Marshal(market)
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
-	return
 }
 
 func (this *GalaxyController) StrategyUserDefine() {
@@ -484,14 +500,15 @@ func (this *GalaxyController) StrategyUserDefine() {
 		logger.Debug(err)
 	}
 
-	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
-	b, err := json.Marshal(set.UserDefine)
+	Memo.LockStrategyMessageSetMap.RLock()
+	userDefine := Memo.StrategyMessageSetMap[ob["StrategyName"]].UserDefine
+	Memo.LockStrategyMessageSetMap.RUnlock()
 
+	b, err := json.Marshal(userDefine)
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
-	return
 }
 
 func (this *GalaxyController) StrategyTrade() {
@@ -501,14 +518,15 @@ func (this *GalaxyController) StrategyTrade() {
 		logger.Debug(err)
 	}
 
-	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
-	b, err := json.Marshal(set.Trade)
+	Memo.LockStrategyMessageSetMap.RLock()
+	trade := Memo.StrategyMessageSetMap[ob["StrategyName"]].Trade
+	Memo.LockStrategyMessageSetMap.RUnlock()
 
+	b, err := json.Marshal(trade)
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
-	return
 }
 
 func (this *GalaxyController) StrategyOrder() {
@@ -518,12 +536,13 @@ func (this *GalaxyController) StrategyOrder() {
 		logger.Debug(err)
 	}
 
-	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
-	b, err := json.Marshal(set.Order)
+	Memo.LockStrategyMessageSetMap.RLock()
+	order := Memo.StrategyMessageSetMap[ob["StrategyName"]].Order
+	Memo.LockStrategyMessageSetMap.RUnlock()
 
+	b, err := json.Marshal(order)
 	if err != nil {
 		logger.Error(err)
 	}
 	this.Ctx.ResponseWriter.Write(b)
-	return
 }

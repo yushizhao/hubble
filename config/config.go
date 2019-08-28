@@ -28,7 +28,7 @@ type SConfig struct {
 
 	RootKey string
 
-	StrategyExpire  int
+	StrategyExpire  int64
 	UserDefineLimit int
 	TradeLimit      int
 	OrderLimit      int
