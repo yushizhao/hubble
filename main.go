@@ -71,7 +71,11 @@ func main() {
 		logger.Error(err)
 	}
 
-	server.StartServer()
+	if config.Server.MOCK {
+		server.MOCK_StartServer()
+	} else {
+		server.StartServer()
+	}
 
 	done := make(chan bool, 1)
 	<-done

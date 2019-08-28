@@ -3,21 +3,11 @@ package server
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/toolbox"
-	"github.com/yushizhao/authenticator/boltwrapper"
 	"github.com/yushizhao/hubble/config"
-	"github.com/yushizhao/hubble/ding"
 	"github.com/yushizhao/hubble/rediswrapper"
 )
 
-var MarketDataSource *rediswrapper.Client
-var TradingSource *rediswrapper.Client
-var GalaxySource *rediswrapper.Client
-
-var InvitationDing ding.Ding
-
 func StartServer() {
-
-	boltwrapper.InitDB()
 
 	MarketDataSource = rediswrapper.NewClient(config.Server.MarketData.Addr, config.Server.MarketData.Pass, 3, 60)
 	TradingSource = rediswrapper.NewClient(config.Server.Trading.Addr, config.Server.Trading.Pass, 3, 60)

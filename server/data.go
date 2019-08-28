@@ -6,7 +6,9 @@ import (
 	"sync"
 
 	"github.com/wonderivan/logger"
+	"github.com/yushizhao/authenticator/boltwrapper"
 	"github.com/yushizhao/hubble/models"
+	"github.com/yushizhao/hubble/rediswrapper"
 )
 
 type MEMO struct {
@@ -37,6 +39,10 @@ const ISSUER = "Hubble"
 
 var Memo MEMO
 
+var MarketDataSource *rediswrapper.Client
+var TradingSource *rediswrapper.Client
+var GalaxySource *rediswrapper.Client
+
 func init() {
 	Memo.SymbolsMapExchanges = make(map[string][]string)
 	Memo.SymbolsMapLastTrade = make(map[string]models.TRADE)
@@ -55,4 +61,6 @@ func init() {
 	}
 
 	Memo.RealtimeAccounts = Memo.Accounts
+
+	boltwrapper.InitDB()
 }

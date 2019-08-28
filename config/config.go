@@ -8,6 +8,8 @@ import (
 )
 
 type SConfig struct {
+	MOCK bool
+
 	Port int
 
 	Trading    AddrPass
