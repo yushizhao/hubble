@@ -191,7 +191,7 @@ func UpdateAccount() {
 }
 
 func UpdateGalaxy() {
-	psc, err := GalaxySource.Sub("RtnPlatformDetail", "RtnStrategyDetail")
+	psc, err := GalaxySource.Sub("GalaxyDetail", "StrategySummary", "StrategyMarket", "StrategyUserDefine", "StrategyTrade", "StrategyOrder")
 	if err != nil {
 		logger.Error(err)
 	}
@@ -199,7 +199,8 @@ func UpdateGalaxy() {
 	for {
 		switch v := psc.Receive().(type) {
 		case redis.Message:
-			if v.Channel == "RtnPlatformDetail" {
+			switch v.Channel {
+			case "GalaxyDetail":
 				var s models.GalaxyStatus
 				err := json.Unmarshal(v.Data, &s)
 				if err != nil {
@@ -211,46 +212,111 @@ func UpdateGalaxy() {
 				Memo.GalaxyStatusMemo = s
 				Memo.LockGalaxyStatusMemo.Unlock()
 
-			} else {
-				var tmp map[string]interface{}
-				var s models.StrategyStatus
-
-				err := json.Unmarshal(v.Data, &tmp)
+			case "StrategySummary":
+				var summary models.StrategySummary
+				err := json.Unmarshal(v.Data, &summary)
 				if err != nil {
 					logger.Error(err)
 					break
 				}
 
-				if val, ok := tmp["Active"].(int); ok {
-					s.Active = val
-				} else {
-					logger.Warn("not expected: %s", string(v.Data))
+				Memo.LockGalaxyStatusMemo.Lock()
+				if _, ok := Memo.StrategyMessageSetMap[summary.StrategyName]; !ok {
+					Memo.StrategyMessageSetMap[summary.StrategyName] = models.MakeStrategyMessageSet()
+				}
+				err = Memo.StrategyMessageSetMap[summary.StrategyName].InsertSummary(summary)
+				Memo.LockGalaxyStatusMemo.Unlock()
+
+				if err != nil {
+					logger.Error(err)
 					break
 				}
 
-				if val, ok := tmp["UpdateTime"].(string); ok {
-					s.UpdateTime = val
-				} else {
-					logger.Warn("not expected: %s", string(v.Data))
+			case "StrategyMarket":
+				var market models.StrategyMarket
+				err := json.Unmarshal(v.Data, &market)
+				if err != nil {
+					logger.Error(err)
 					break
 				}
 
-				if val, ok := tmp["StrategyName"].(string); ok {
-					Memo.LockStrategyStatusMap.Lock()
-					Memo.StrategyStatusMap[val] = s
-					Memo.LockStrategyStatusMap.Unlock()
-				} else {
-					logger.Warn("not expected: %s", string(v.Data))
+				Memo.LockGalaxyStatusMemo.Lock()
+				if _, ok := Memo.StrategyMessageSetMap[market.StrategyName]; !ok {
+					Memo.StrategyMessageSetMap[market.StrategyName] = models.MakeStrategyMessageSet()
+				}
+				err = Memo.StrategyMessageSetMap[market.StrategyName].InsertMarket(market)
+				Memo.LockGalaxyStatusMemo.Unlock()
+
+				if err != nil {
+					logger.Error(err)
 					break
 				}
+
+			case "StrategyUserDefine":
+				var userDefine models.StrategyUserDefine
+				err := json.Unmarshal(v.Data, &userDefine)
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+				Memo.LockGalaxyStatusMemo.Lock()
+				if _, ok := Memo.StrategyMessageSetMap[userDefine.StrategyName]; !ok {
+					Memo.StrategyMessageSetMap[userDefine.StrategyName] = models.MakeStrategyMessageSet()
+				}
+				err = Memo.StrategyMessageSetMap[userDefine.StrategyName].InsertUserDefine(userDefine)
+				Memo.LockGalaxyStatusMemo.Unlock()
+
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+			case "StrategyTrade":
+				var trade models.StrategyTrade
+				err := json.Unmarshal(v.Data, &trade)
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+				Memo.LockGalaxyStatusMemo.Lock()
+				if _, ok := Memo.StrategyMessageSetMap[trade.StrategyName]; !ok {
+					Memo.StrategyMessageSetMap[trade.StrategyName] = models.MakeStrategyMessageSet()
+				}
+				err = Memo.StrategyMessageSetMap[trade.StrategyName].InsertTrade(trade)
+				Memo.LockGalaxyStatusMemo.Unlock()
+
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+			case "StrategyOrder":
+				var order models.StrategyOrder
+				err := json.Unmarshal(v.Data, &order)
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+				Memo.LockGalaxyStatusMemo.Lock()
+				if _, ok := Memo.StrategyMessageSetMap[order.StrategyName]; !ok {
+					Memo.StrategyMessageSetMap[order.StrategyName] = models.MakeStrategyMessageSet()
+				}
+				err = Memo.StrategyMessageSetMap[order.StrategyName].InsertOrder(order)
+				Memo.LockGalaxyStatusMemo.Unlock()
+
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
 			}
 
 		case redis.Subscription:
-			// if v.Channel == "RtnPlatformDetail" {
-			// 	logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
-			// } else {
-			// 	logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
-			// }
+			// logger.Info("%s: %s %d\n", v.Channel, v.Kind, v.Count)
+
 		case error:
 			logger.Warn(v)
 			logger.Warn("Reconnect in 1 sec.")
