@@ -38,8 +38,7 @@ func MOCK_StartServer() {
 	// beego.Router("/trading/PORTIFOLIO", &MainController{}, "get:PORTIFOLIO")
 
 	beego.Router("/galaxy/GalaxyDetail", &MOCK_GalaxyController{}, "get:GalaxyDetail")
-	beego.Router("/galaxy/StrategyList", &MOCK_GalaxyController{}, "get:StrategyList")
-	beego.Router("/galaxy/StrategySummary", &MOCK_GalaxyController{}, "post:StrategySummary")
+	beego.Router("/galaxy/StrategySummary", &MOCK_GalaxyController{}, "get:StrategySummary")
 	beego.Router("/galaxy/StrategyMarket", &MOCK_GalaxyController{}, "post:StrategyMarket")
 	beego.Router("/galaxy/StrategyUserDefine", &MOCK_GalaxyController{}, "post:StrategyUserDefine")
 	beego.Router("/galaxy/StrategyTrade", &MOCK_GalaxyController{}, "post:StrategyTrade")

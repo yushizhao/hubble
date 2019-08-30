@@ -300,21 +300,14 @@ func (this *MOCK_GalaxyController) GalaxyDetail() {
 	return
 }
 
-func (this *MOCK_GalaxyController) StrategyList() {
-	b, _ := json.Marshal(models.MOCK_StrategyList)
-	this.Ctx.ResponseWriter.Write(b)
-	return
-}
-
 func (this *MOCK_GalaxyController) StrategySummary() {
-	ob := make(map[string]string)
-	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
-	if err != nil {
-		logger.Debug(err)
+	summaries := make([]*models.StrategySummary, len(models.MOCK_StrategyList))
+
+	for i, v := range models.MOCK_StrategyList {
+		summaries[i] = &models.MOCK_MakeStrategyMessageSet(v).Summary
 	}
 
-	set := models.MOCK_MakeStrategyMessageSet(ob["StrategyName"])
-	b, err := json.Marshal(set.Summary)
+	b, err := json.Marshal(summaries)
 
 	if err != nil {
 		logger.Error(err)
