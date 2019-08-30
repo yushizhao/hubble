@@ -428,14 +428,13 @@ func (this *GalaxyController) GalaxyDetail() {
 	this.Ctx.ResponseWriter.Write(b)
 }
 
-func (this *GalaxyController) StrategyList() {
+func (this *GalaxyController) StrategySummary() {
 
 	expired := time.Now().Unix() - config.Server.StrategyExpire
 
-	Memo.LockStrategyMessageSetMap.Lock()
-
 	var keys, keysExpired []string
 
+	Memo.LockStrategyMessageSetMap.Lock()
 	for k, v := range Memo.StrategyMessageSetMap {
 		if v.UpdateTimestamp > expired {
 			keys = append(keys, k)
@@ -447,28 +446,17 @@ func (this *GalaxyController) StrategyList() {
 	for _, k := range keysExpired {
 		delete(Memo.StrategyMessageSetMap, k)
 	}
-
 	Memo.LockStrategyMessageSetMap.Unlock()
 
-	b, err := json.Marshal(keys)
-	if err != nil {
-		logger.Error(err)
-	}
-	this.Ctx.ResponseWriter.Write(b)
-}
-
-func (this *GalaxyController) StrategySummary() {
-	ob := make(map[string]string)
-	err := json.Unmarshal(this.Ctx.Input.RequestBody, &ob)
-	if err != nil {
-		logger.Debug(err)
-	}
+	summaries := make([]*models.StrategySummary, len(keys))
 
 	Memo.LockStrategyMessageSetMap.RLock()
-	summary := Memo.StrategyMessageSetMap[ob["StrategyName"]].Summary
+	for i, v := range keys {
+		summaries[i] = &Memo.StrategyMessageSetMap[v].Summary
+	}
 	Memo.LockStrategyMessageSetMap.RUnlock()
 
-	b, err := json.Marshal(summary)
+	b, err := json.Marshal(summaries)
 	if err != nil {
 		logger.Error(err)
 	}

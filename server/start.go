@@ -49,8 +49,7 @@ func StartServer() {
 	// beego.Router("/trading/PORTIFOLIO", &MainController{}, "get:PORTIFOLIO")
 
 	beego.Router("/galaxy/GalaxyDetail", &GalaxyController{}, "get:GalaxyDetail")
-	beego.Router("/galaxy/StrategyList", &GalaxyController{}, "get:StrategyList")
-	beego.Router("/galaxy/StrategySummary", &GalaxyController{}, "post:StrategySummary")
+	beego.Router("/galaxy/StrategySummary", &GalaxyController{}, "get:StrategySummary")
 	beego.Router("/galaxy/StrategyMarket", &GalaxyController{}, "post:StrategyMarket")
 	beego.Router("/galaxy/StrategyUserDefine", &GalaxyController{}, "post:StrategyUserDefine")
 	beego.Router("/galaxy/StrategyTrade", &GalaxyController{}, "post:StrategyTrade")
