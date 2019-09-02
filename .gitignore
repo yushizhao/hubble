@@ -7,3 +7,4 @@ hubble
 *.json
 *.csv
 *.db
+emailwrapper/smtp.go
