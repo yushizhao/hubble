@@ -12,6 +12,7 @@ import (
 	"github.com/astaxie/beego/toolbox"
 	"github.com/yushizhao/hubble/config"
 	"github.com/yushizhao/hubble/emailwrapper"
+	"github.com/yushizhao/hubble/models"
 )
 
 // func TaskUpdateFromDepth() {
@@ -77,30 +78,86 @@ import (
 
 func Report() error {
 	now := time.Now().Format(time.RFC3339)
-	filename := "PnL." + now + ".csv"
-	file, err := os.Create(filename)
+	PnLReport := "PnL." + now + ".csv"
+	BalanceReport := "Balance." + now + ".csv"
+
+	// Balance
+	fileBalance, err := os.Create(BalanceReport)
 	if err != nil {
 		return err
 	}
+	defer fileBalance.Close()
+	writerBalance := csv.NewWriter(fileBalance)
 
-	writer := csv.NewWriter(file)
+	// PnL
+	filePnL, err := os.Create(PnLReport)
+	if err != nil {
+		return err
+	}
+	defer filePnL.Close()
+	writerPnL := csv.NewWriter(filePnL)
+
+	var assets []string
+	var totalPortfolios []models.Portfolio
 
 	for _, a := range Memo.RealtimeAccounts {
 		if a.PhysicalAccount == "TOTAL" {
-			for _, p := range a.LogicalAccount {
+			totalPortfolios = a.LogicalAccount
+		}
+	}
 
-				err := writer.Write([]string{p.ClientCode, strconv.FormatFloat(p.PnL, 'g', -1, 64)})
-				if err != nil {
-					return err
-				}
+	for _, p := range totalPortfolios {
+		if p.ClientCode == "TOTAL" {
+			for k, _ := range p.PnLComponent {
+				assets = append(assets, k)
 			}
 		}
 	}
 
-	writer.Flush()
-	file.Close()
+	// columns
+	err = writerPnL.Write(append([]string{"", "TOTAL"}, assets...))
+	if err != nil {
+		return err
+	}
 
-	return emailwrapper.Send(filename)
+	err = writerBalance.Write(append([]string{"", "TOTAL"}, assets...))
+	if err != nil {
+		return err
+	}
+
+	// rows
+	for _, p := range totalPortfolios {
+
+		rBalance := []string{p.ClientCode, strconv.FormatFloat(p.Value, 'g', -1, 64)}
+		rPnL := []string{p.ClientCode, strconv.FormatFloat(p.PnL, 'g', -1, 64)}
+
+		for _, asset := range assets {
+			if v, ok := p.ValueComponent[asset]; ok {
+				rBalance = append(rBalance, strconv.FormatFloat(v, 'g', -1, 64))
+			} else {
+				rBalance = append(rBalance, "")
+			}
+			if v, ok := p.PnLComponent[asset]; ok {
+				rPnL = append(rPnL, strconv.FormatFloat(v, 'g', -1, 64))
+			} else {
+				rPnL = append(rPnL, "")
+			}
+		}
+
+		err = writerBalance.Write(rBalance)
+		if err != nil {
+			return err
+		}
+
+		err = writerPnL.Write(rPnL)
+		if err != nil {
+			return err
+		}
+	}
+
+	writerBalance.Flush()
+	writerPnL.Flush()
+	return emailwrapper.Send([]string{PnLReport, BalanceReport})
 }
 
 func Backup() error {

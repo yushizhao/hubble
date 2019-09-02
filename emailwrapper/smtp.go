@@ -11,13 +11,19 @@ var from = ""
 var to = []string{""}
 var password = ""
 
-func Send(attachment string) error {
+func Send(attachments []string) error {
 	e := email.NewEmail()
 	e.From = from
 	e.To = to
-	e.Subject = "Hubble Report"
+	e.Subject = "Hubble Report (TEST)"
 	e.Text = []byte("This email is automatically sent by Hubble.")
-	e.AttachFile(attachment)
+
+	for _, attachment := range attachments {
+		_, err := e.AttachFile(attachment)
+		if err != nil {
+			return err
+		}
+	}
 
 	var emptyConfig tls.Config
 	emptyConfig.ServerName = "smtp.qiye.aliyun.com"
