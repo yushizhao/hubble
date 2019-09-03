@@ -77,7 +77,7 @@ import (
 // }
 
 func Report() error {
-	now := time.Now().Format(time.RFC3339)
+	now := time.Now().UTC().Format(time.RFC3339)
 	PnLReport := "PnL." + now + ".csv"
 	BalanceReport := "Balance." + now + ".csv"
 
@@ -162,7 +162,7 @@ func Report() error {
 
 func Backup() error {
 
-	now := time.Now().Format(time.RFC3339)
+	now := time.Now().UTC().Format(time.RFC3339)
 
 	b, err := json.Marshal(Memo.RealtimeAccounts)
 	if err != nil {
