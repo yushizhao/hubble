@@ -437,12 +437,14 @@ type StrategyMessageSet struct {
 	Order           []StrategyOrder
 }
 
-func MakeStrategyMessageSet() *StrategyMessageSet {
+func MakeStrategyMessageSet(name string) *StrategyMessageSet {
 	set := new(StrategyMessageSet)
 
 	summary := new(StrategySummary)
+	summary.StrategyName = name
 	summary.Position = make(map[string]float64)
 	summary.Account = make(map[string]float64)
+	summary.Active = 49
 	set.Summary = *summary
 
 	set.Market = make(map[string]StrategyMarket)
@@ -456,10 +458,10 @@ func (set *StrategyMessageSet) InsertSummary(that StrategySummary) error {
 		return err
 	}
 	set.UpdateTimestamp = t.Unix()
+	set.Summary.UpdateTime = that.UpdateTime
 
 	set.Summary.StrategyName = that.StrategyName
 	set.Summary.Active = that.Active
-	set.Summary.UpdateTime = that.UpdateTime
 
 	return nil
 }
@@ -470,6 +472,7 @@ func (set *StrategyMessageSet) InsertPosition(that StrategyPosition) error {
 		return err
 	}
 	set.UpdateTimestamp = t.Unix()
+	set.Summary.UpdateTime = that.UpdateTime
 
 	set.Summary.Position[that.InstrumentID] = that.Position
 
@@ -482,6 +485,7 @@ func (set *StrategyMessageSet) InsertAccount(that StrategyAccount) error {
 		return err
 	}
 	set.UpdateTimestamp = t.Unix()
+	set.Summary.UpdateTime = that.UpdateTime
 
 	set.Summary.Account[that.InstrumentID] = that.Account
 
@@ -494,6 +498,7 @@ func (set *StrategyMessageSet) InsertMarket(that StrategyMarket) error {
 		return err
 	}
 	set.UpdateTimestamp = t.Unix()
+	set.Summary.UpdateTime = that.UpdateTime
 
 	set.Market[that.InstrumentID] = that
 
@@ -514,6 +519,7 @@ func (set *StrategyMessageSet) InsertUserDefine(that StrategyUserDefine) error {
 		return err
 	}
 	set.UpdateTimestamp = t.Unix()
+	set.Summary.UpdateTime = that.UpdateTime
 
 	if len(set.UserDefine) == config.Server.UserDefineLimit {
 		set.UserDefine = append([]StrategyUserDefine{that}, set.UserDefine[:(config.Server.UserDefineLimit-1)]...)
@@ -530,6 +536,7 @@ func (set *StrategyMessageSet) InsertTrade(that StrategyTrade) error {
 		return err
 	}
 	set.UpdateTimestamp = t.Unix()
+	set.Summary.UpdateTime = that.UpdateTime
 
 	if len(set.Trade) == config.Server.TradeLimit {
 		set.Trade = append([]StrategyTrade{that}, set.Trade[:(config.Server.TradeLimit-1)]...)
@@ -546,6 +553,7 @@ func (set *StrategyMessageSet) InsertOrder(that StrategyOrder) error {
 		return err
 	}
 	set.UpdateTimestamp = t.Unix()
+	set.Summary.UpdateTime = that.UpdateTime
 
 	NewOrder := []StrategyOrder{that}
 

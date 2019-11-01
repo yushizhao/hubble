@@ -202,6 +202,8 @@ func UpdateGalaxy() {
 	for {
 		switch v := psc.Receive().(type) {
 		case redis.Message:
+			// logger.Debug(v.Channel)
+			// logger.Debug(string(v.Data))
 			switch v.Channel {
 			case "GalaxyDetail":
 				var s models.GalaxyStatus
@@ -227,7 +229,7 @@ func UpdateGalaxy() {
 
 				Memo.LockGalaxyStatusMemo.Lock()
 				if _, ok := Memo.StrategyMessageSetMap[summary.StrategyName]; !ok {
-					Memo.StrategyMessageSetMap[summary.StrategyName] = models.MakeStrategyMessageSet()
+					Memo.StrategyMessageSetMap[summary.StrategyName] = models.MakeStrategyMessageSet(summary.StrategyName)
 				}
 				err = Memo.StrategyMessageSetMap[summary.StrategyName].InsertSummary(summary)
 				Memo.LockGalaxyStatusMemo.Unlock()
@@ -248,7 +250,7 @@ func UpdateGalaxy() {
 
 				Memo.LockGalaxyStatusMemo.Lock()
 				if _, ok := Memo.StrategyMessageSetMap[position.StrategyName]; !ok {
-					Memo.StrategyMessageSetMap[position.StrategyName] = models.MakeStrategyMessageSet()
+					Memo.StrategyMessageSetMap[position.StrategyName] = models.MakeStrategyMessageSet(position.StrategyName)
 				}
 				err = Memo.StrategyMessageSetMap[position.StrategyName].InsertPosition(position)
 				Memo.LockGalaxyStatusMemo.Unlock()
@@ -269,7 +271,7 @@ func UpdateGalaxy() {
 
 				Memo.LockGalaxyStatusMemo.Lock()
 				if _, ok := Memo.StrategyMessageSetMap[account.StrategyName]; !ok {
-					Memo.StrategyMessageSetMap[account.StrategyName] = models.MakeStrategyMessageSet()
+					Memo.StrategyMessageSetMap[account.StrategyName] = models.MakeStrategyMessageSet(account.StrategyName)
 				}
 				err = Memo.StrategyMessageSetMap[account.StrategyName].InsertAccount(account)
 				Memo.LockGalaxyStatusMemo.Unlock()
@@ -290,7 +292,7 @@ func UpdateGalaxy() {
 
 				Memo.LockGalaxyStatusMemo.Lock()
 				if _, ok := Memo.StrategyMessageSetMap[market.StrategyName]; !ok {
-					Memo.StrategyMessageSetMap[market.StrategyName] = models.MakeStrategyMessageSet()
+					Memo.StrategyMessageSetMap[market.StrategyName] = models.MakeStrategyMessageSet(market.StrategyName)
 				}
 				err = Memo.StrategyMessageSetMap[market.StrategyName].InsertMarket(market)
 				Memo.LockGalaxyStatusMemo.Unlock()
@@ -311,7 +313,7 @@ func UpdateGalaxy() {
 				userDefine := userDefineInput.Transform()
 				Memo.LockGalaxyStatusMemo.Lock()
 				if _, ok := Memo.StrategyMessageSetMap[userDefine.StrategyName]; !ok {
-					Memo.StrategyMessageSetMap[userDefine.StrategyName] = models.MakeStrategyMessageSet()
+					Memo.StrategyMessageSetMap[userDefine.StrategyName] = models.MakeStrategyMessageSet(userDefine.StrategyName)
 				}
 				err = Memo.StrategyMessageSetMap[userDefine.StrategyName].InsertUserDefine(userDefine)
 				Memo.LockGalaxyStatusMemo.Unlock()
@@ -332,7 +334,7 @@ func UpdateGalaxy() {
 
 				Memo.LockGalaxyStatusMemo.Lock()
 				if _, ok := Memo.StrategyMessageSetMap[trade.StrategyName]; !ok {
-					Memo.StrategyMessageSetMap[trade.StrategyName] = models.MakeStrategyMessageSet()
+					Memo.StrategyMessageSetMap[trade.StrategyName] = models.MakeStrategyMessageSet(trade.StrategyName)
 				}
 				err = Memo.StrategyMessageSetMap[trade.StrategyName].InsertTrade(trade)
 				Memo.LockGalaxyStatusMemo.Unlock()
@@ -353,7 +355,7 @@ func UpdateGalaxy() {
 
 				Memo.LockGalaxyStatusMemo.Lock()
 				if _, ok := Memo.StrategyMessageSetMap[order.StrategyName]; !ok {
-					Memo.StrategyMessageSetMap[order.StrategyName] = models.MakeStrategyMessageSet()
+					Memo.StrategyMessageSetMap[order.StrategyName] = models.MakeStrategyMessageSet(order.StrategyName)
 				}
 				err = Memo.StrategyMessageSetMap[order.StrategyName].InsertOrder(order)
 				Memo.LockGalaxyStatusMemo.Unlock()
