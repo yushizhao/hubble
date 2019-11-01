@@ -390,6 +390,13 @@ type StrategyMarket struct {
 	UpdateTime   string
 }
 
+type StrategyUserDefineInput struct {
+	StrategyName string
+	Key          string
+	Value        string
+	UpdateTime   string
+}
+
 type StrategyUserDefine struct {
 	StrategyName string
 	UserDefine   map[string]string
@@ -489,6 +496,14 @@ func (set *StrategyMessageSet) InsertMarket(that StrategyMarket) error {
 	set.Market[that.InstrumentID] = that
 
 	return nil
+}
+
+func (this StrategyUserDefineInput) Transform() (that StrategyUserDefine) {
+	that.StrategyName = this.StrategyName
+	that.UpdateTime = this.UpdateTime
+	that.UserDefine = make(map[string]string)
+	that.UserDefine[this.Key] = this.Value
+	return that
 }
 
 func (set *StrategyMessageSet) InsertUserDefine(that StrategyUserDefine) error {

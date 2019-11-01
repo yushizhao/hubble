@@ -293,13 +293,13 @@ func UpdateGalaxy() {
 				}
 
 			case "StrategyUserDefine":
-				var userDefine models.StrategyUserDefine
-				err := json.Unmarshal(v.Data, &userDefine)
+				var userDefineInput models.StrategyUserDefineInput
+				err := json.Unmarshal(v.Data, &userDefineInput)
 				if err != nil {
 					logger.Error(err)
 					break
 				}
-
+				userDefine := userDefineInput.Transform()
 				Memo.LockGalaxyStatusMemo.Lock()
 				if _, ok := Memo.StrategyMessageSetMap[userDefine.StrategyName]; !ok {
 					Memo.StrategyMessageSetMap[userDefine.StrategyName] = models.MakeStrategyMessageSet()
