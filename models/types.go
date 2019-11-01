@@ -457,7 +457,9 @@ func (set *StrategyMessageSet) InsertSummary(that StrategySummary) error {
 	}
 	set.UpdateTimestamp = t.Unix()
 
+	set.Summary.StrategyName = that.StrategyName
 	set.Summary.Active = that.Active
+	set.Summary.UpdateTime = that.UpdateTime
 
 	return nil
 }
