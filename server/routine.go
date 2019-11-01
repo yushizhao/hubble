@@ -84,6 +84,7 @@ func SubscribeTrade() {
 			err := json.Unmarshal(v.Data, &t)
 			if err != nil {
 				logger.Error(err)
+				logger.Debug(string(v.Data))
 				break
 			}
 			Memo.LockSymbolsMapLastTrade.Lock()
@@ -118,6 +119,7 @@ func UpdateAccount() {
 			err := json.Unmarshal(v.Data, &inAccounts)
 			if err != nil {
 				logger.Error(err)
+				logger.Debug(string(v.Data))
 				break
 			}
 
@@ -135,6 +137,7 @@ func UpdateAccount() {
 			err = json.Unmarshal(b, &fairValue)
 			if err != nil {
 				logger.Error(err)
+				logger.Debug(string(b))
 				break
 			}
 
@@ -205,6 +208,7 @@ func UpdateGalaxy() {
 				err := json.Unmarshal(v.Data, &s)
 				if err != nil {
 					logger.Error(err)
+					logger.Debug(string(v.Data))
 					break
 				}
 
@@ -217,6 +221,7 @@ func UpdateGalaxy() {
 				err := json.Unmarshal(v.Data, &summary)
 				if err != nil {
 					logger.Error(err)
+					logger.Debug(string(v.Data))
 					break
 				}
 
@@ -237,6 +242,7 @@ func UpdateGalaxy() {
 				err := json.Unmarshal(v.Data, &position)
 				if err != nil {
 					logger.Error(err)
+					logger.Debug(string(v.Data))
 					break
 				}
 
@@ -257,6 +263,7 @@ func UpdateGalaxy() {
 				err := json.Unmarshal(v.Data, &account)
 				if err != nil {
 					logger.Error(err)
+					logger.Debug(string(v.Data))
 					break
 				}
 
@@ -277,6 +284,7 @@ func UpdateGalaxy() {
 				err := json.Unmarshal(v.Data, &market)
 				if err != nil {
 					logger.Error(err)
+					logger.Debug(string(v.Data))
 					break
 				}
 
@@ -297,6 +305,7 @@ func UpdateGalaxy() {
 				err := json.Unmarshal(v.Data, &userDefineInput)
 				if err != nil {
 					logger.Error(err)
+					logger.Debug(string(v.Data))
 					break
 				}
 				userDefine := userDefineInput.Transform()
@@ -317,6 +326,7 @@ func UpdateGalaxy() {
 				err := json.Unmarshal(v.Data, &trade)
 				if err != nil {
 					logger.Error(err)
+					logger.Debug(string(v.Data))
 					break
 				}
 
@@ -337,6 +347,7 @@ func UpdateGalaxy() {
 				err := json.Unmarshal(v.Data, &order)
 				if err != nil {
 					logger.Error(err)
+					logger.Debug(string(v.Data))
 					break
 				}
 
