@@ -191,7 +191,7 @@ func UpdateAccount() {
 }
 
 func UpdateGalaxy() {
-	psc, err := GalaxySource.Sub("GalaxyDetail", "StrategySummary", "StrategyMarket", "StrategyUserDefine", "StrategyTrade", "StrategyOrder")
+	psc, err := GalaxySource.Sub("GalaxyDetail", "StrategySummary", "StrategyPosition", "StrategyAccount", "StrategyMarket", "StrategyUserDefine", "StrategyTrade", "StrategyOrder")
 	if err != nil {
 		logger.Error(err)
 	}
@@ -225,6 +225,46 @@ func UpdateGalaxy() {
 					Memo.StrategyMessageSetMap[summary.StrategyName] = models.MakeStrategyMessageSet()
 				}
 				err = Memo.StrategyMessageSetMap[summary.StrategyName].InsertSummary(summary)
+				Memo.LockGalaxyStatusMemo.Unlock()
+
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+			case "StrategyPosition":
+				var position models.StrategyPosition
+				err := json.Unmarshal(v.Data, &position)
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+				Memo.LockGalaxyStatusMemo.Lock()
+				if _, ok := Memo.StrategyMessageSetMap[position.StrategyName]; !ok {
+					Memo.StrategyMessageSetMap[position.StrategyName] = models.MakeStrategyMessageSet()
+				}
+				err = Memo.StrategyMessageSetMap[position.StrategyName].InsertPosition(position)
+				Memo.LockGalaxyStatusMemo.Unlock()
+
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+			case "StrategyAccount":
+				var account models.StrategyAccount
+				err := json.Unmarshal(v.Data, &account)
+				if err != nil {
+					logger.Error(err)
+					break
+				}
+
+				Memo.LockGalaxyStatusMemo.Lock()
+				if _, ok := Memo.StrategyMessageSetMap[account.StrategyName]; !ok {
+					Memo.StrategyMessageSetMap[account.StrategyName] = models.MakeStrategyMessageSet()
+				}
+				err = Memo.StrategyMessageSetMap[account.StrategyName].InsertAccount(account)
 				Memo.LockGalaxyStatusMemo.Unlock()
 
 				if err != nil {

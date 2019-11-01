@@ -366,6 +366,20 @@ type StrategySummary struct {
 	UpdateTime   string
 }
 
+type StrategyPosition struct {
+	StrategyName string
+	InstrumentID string
+	Position     float64
+	UpdateTime   string
+}
+
+type StrategyAccount struct {
+	StrategyName string
+	InstrumentID string
+	Account      float64
+	UpdateTime   string
+}
+
 type StrategyMarket struct {
 	StrategyName string
 	InstrumentID string
@@ -419,10 +433,10 @@ type StrategyMessageSet struct {
 func MakeStrategyMessageSet() *StrategyMessageSet {
 	set := new(StrategyMessageSet)
 
-	// summary := new(StrategySummary)
-	// summary.Position = make(map[string]float64)
-	// summary.Account = make(map[string]float64)
-	// set.Summary = *summary
+	summary := new(StrategySummary)
+	summary.Position = make(map[string]float64)
+	summary.Account = make(map[string]float64)
+	set.Summary = *summary
 
 	set.Market = make(map[string]StrategyMarket)
 
@@ -436,7 +450,31 @@ func (set *StrategyMessageSet) InsertSummary(that StrategySummary) error {
 	}
 	set.UpdateTimestamp = t.Unix()
 
-	set.Summary = that
+	set.Summary.Active = that.Active
+
+	return nil
+}
+
+func (set *StrategyMessageSet) InsertPosition(that StrategyPosition) error {
+	t, err := time.Parse(updateTimeLayout, that.UpdateTime)
+	if err != nil {
+		return err
+	}
+	set.UpdateTimestamp = t.Unix()
+
+	set.Summary.Position[that.InstrumentID] = that.Position
+
+	return nil
+}
+
+func (set *StrategyMessageSet) InsertAccount(that StrategyAccount) error {
+	t, err := time.Parse(updateTimeLayout, that.UpdateTime)
+	if err != nil {
+		return err
+	}
+	set.UpdateTimestamp = t.Unix()
+
+	set.Summary.Account[that.InstrumentID] = that.Account
 
 	return nil
 }
