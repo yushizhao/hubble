@@ -184,7 +184,7 @@ func UpdateAccount() {
 		case error:
 			logger.Warn(v)
 			logger.Warn("Reconnect in 1 sec.")
-			psc, err = MarketDataSource.PSub("TRADEx*")
+			psc, err = TradingSource.PSub("*.Monitor")
 			if err != nil {
 				logger.Error(err)
 				break
@@ -373,7 +373,7 @@ func UpdateGalaxy() {
 		case error:
 			logger.Warn(v)
 			logger.Warn("Reconnect in 1 sec.")
-			psc, err = MarketDataSource.PSub("TRADEx*")
+			psc, err = GalaxySource.Sub("GalaxyDetail", "StrategySummary", "StrategyPosition", "StrategyAccount", "StrategyMarket", "StrategyUserDefine", "StrategyTrade", "StrategyOrder")
 			if err != nil {
 				logger.Error(err)
 				break
