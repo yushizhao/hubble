@@ -40,7 +40,7 @@ const ISSUER = "Hubble"
 var Memo MEMO
 
 var MarketDataSource *rediswrapper.Client
-var TradingSource *rediswrapper.Client
+var ApolloSource *rediswrapper.Client
 var GalaxySource *rediswrapper.Client
 
 func init() {

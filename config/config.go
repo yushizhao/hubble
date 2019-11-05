@@ -12,7 +12,7 @@ type SConfig struct {
 
 	Port int
 
-	Trading    AddrPass
+	Apollo    AddrPass
 	MarketData AddrPass
 	OMS        AddrPass
 	Galaxy     AddrPass

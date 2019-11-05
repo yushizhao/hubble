@@ -105,7 +105,7 @@ func SubscribeTrade() {
 }
 
 func UpdateAccount() {
-	psc, err := TradingSource.PSub("*.Monitor")
+	psc, err := ApolloSource.PSub("*.Monitor")
 	if err != nil {
 		logger.Error(err)
 	}
@@ -184,7 +184,7 @@ func UpdateAccount() {
 		case error:
 			logger.Warn(v)
 			logger.Warn("Reconnect in 1 sec.")
-			psc, err = TradingSource.PSub("*.Monitor")
+			psc, err = ApolloSource.PSub("*.Monitor")
 			if err != nil {
 				logger.Error(err)
 				break

@@ -10,7 +10,7 @@ import (
 func StartServer() {
 
 	MarketDataSource = rediswrapper.NewClient(config.Server.MarketData.Addr, config.Server.MarketData.Pass, 3, 60)
-	TradingSource = rediswrapper.NewClient(config.Server.Trading.Addr, config.Server.Trading.Pass, 3, 60)
+	ApolloSource = rediswrapper.NewClient(config.Server.Apollo.Addr, config.Server.Apollo.Pass, 3, 60)
 	GalaxySource = rediswrapper.NewClient(config.Server.Galaxy.Addr, config.Server.Galaxy.Pass, 3, 60)
 
 	go UpdateFromDepth()
