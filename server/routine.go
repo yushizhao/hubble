@@ -105,7 +105,7 @@ func SubscribeTrade() {
 }
 
 func UpdateAccount() {
-	psc, err := ApolloSource.PSub("*.Monitor")
+	psc, err := ApolloSource.Sub("ApolloSys.RtnAssetStatus.Monitor")
 	if err != nil {
 		logger.Error(err)
 	}
